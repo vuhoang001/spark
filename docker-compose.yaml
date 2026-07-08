@@ -1,0 +1,65 @@
+services:
+  zookeeper:
+    image: bitnami/zookeeper:3.8
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - 2181:2181
+    volumes:
+      - zookeeper_data:/bitnami/zookeeper
+
+  kafka:
+    image: bitnami/kafka:3.6.0
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zoCokeeper:2181
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FATOR=1
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=1
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+    ports:
+      - 9092:9092
+    volumes:
+      - kafka_data:/bitnami/kafka
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: olist
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  connect:
+    image: debezium/connect:2.5
+    depends_on:
+      - kafka
+      - postgres
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=my_connect_configs
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+      - STATUS_STORAGE_TOPIC=my_connect_statuses
+      - KEY_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+      - VALUE_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+      - KEY_CONVERTER_SCHEMAS_ENABLE=false
+      - VALUE_CONVERTER_SCHEMAS_ENABLE=false
+      - REST_PORT=8083
+      - CONNECT_PRODUCER_ACKS=1
+    ports:
+      - 8083:8083
+    volumes:
+      - connect_plugins:/kafka/connect
+
+volumes:
+  zookeeper_data:
+  kafka_data:
+  postgres_data:
+  connect_plugins:
