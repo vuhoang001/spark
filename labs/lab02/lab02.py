@@ -1,4 +1,6 @@
+import time
 from pyspark.sql import SparkSession
+from pyspark.sql import functions as F
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -13,25 +15,25 @@ if __name__ == "__main__":
         .config("spark.sql.shuffle.partitions", "8")
         .getOrCreate()
     )
+    spark.sparkContext.setLogLevel("ERROR")
 
-    orders = (
-        spark.read
-        .option("header", True)
-        .option("inferSchema", True)
-        .csv(str(ORDERS_FILE))
+    data = [("HN", "book", 120.0), ("SG", "food", 80.0), ("HN", "food", 300.0),
+            ("DN", "book", 150.0), ("SG", "book", 500.0)] * 40_000   # 200.000 dòng
+    df = spark.createDataFrame(data, ["city", "category", "amount"])
+
+    t0 = time.time()
+    pipeline = (
+        df.filter(F.col("amount") > 100)
+        .withColumn("amount_usd", F.col("amount") / 25_000)
+        .groupBy("city").agg(F.sum("amount_usd").alias("usd"))
     )
 
-    orders.createOrReplaceTempView("orders")
+    print(f"Xây 3 transformation trên 200.000 dòng mất: {time.time()-t0:.4f}s")  # ~0.05s!
+    pipeline.explain(True)
 
-    delivered = orders.filter("order_status = 'delivered'")
-    delivered.select("order_id", "customer_id", "order_status").show(10, truncate=False)
 
-    status_counts = delivered.groupBy("order_status").count()
-    status_counts.show(truncate=False)
-
-    sql_result = spark.sql(
-        "SELECT order_status, COUNT(*) AS cnt FROM orders WHERE order_status = 'delivered' GROUP BY order_status"
-    )
-    sql_result.show(truncate=False)
+    t0 = time.time()
+    pipeline.show()
+    print(f"Action show() mất: {time.time()-t0:.2f}s")
 
     spark.stop()

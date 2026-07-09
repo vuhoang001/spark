@@ -24,7 +24,7 @@ services:
     environment:
       - SPARK_NO_DAEMONIZE=true
       - SPARK_WORKER_MEMORY=1G
-      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_CORES=4
 
   spark-submit:
     image: apache/spark:3.4.1
