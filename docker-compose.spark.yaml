@@ -21,10 +21,17 @@ services:
     depends_on:
       - spark-master
     command: ["/opt/spark/sbin/start-worker.sh", "spark://spark-master:7077"]
+    # TRẦN CỨNG của cluster. App xin quá mức này -> chờ executor vô hạn.
+    # Ngân sách máy (i5-12400: 12 luồng / 15 GiB, trống ~8 GiB):
+    #   chừa OS ~2 luồng + ~3 GiB  ->  cấp Spark 6 core / 6 GiB
+    #   chia 2 worker x 3 core x 3G
+    # RAM host thực tốn: 2 x (heap 2g + overhead ~384m) + driver 1g ~= 5.8 GiB
+    deploy:
+      replicas: 2
     environment:
       - SPARK_NO_DAEMONIZE=true
-      - SPARK_WORKER_MEMORY=1G
-      - SPARK_WORKER_CORES=4
+      - SPARK_WORKER_MEMORY=3G
+      - SPARK_WORKER_CORES=3
 
   spark-submit:
     image: apache/spark:3.4.1

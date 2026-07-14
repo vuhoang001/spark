@@ -17,8 +17,8 @@ Mỗi buổi có một **cổng ra**: chưa qua cổng thì đừng sang buổi 
 
 *Chưa viết pipeline. Chỉ học cách nhìn.*
 
-- [ ] **A1** Vẽ bản đồ cluster (Executors tab → bảng driver/executor/core/RAM)
-- [ ] **A2** `make run` vs `make run-local` (bao gồm: `print()` trong transformation hiện ở đâu)
+- [x] **A1** Vẽ bản đồ cluster (Executors tab → bảng driver/executor/core/RAM) — *demo mẫu, xem `exercises/a01_cluster_map.py`*
+- [x] **A2** `make run` vs `make run-local` (bao gồm: `print()` trong transformation hiện ở đâu) — *`exercises/a02_run_vs_local.py`, kết quả ở §3.0b*
 - [ ] **A5** Đo lazy bằng `time.time()` → phát hiện `inferSchema` là action trá hình
 - [ ] **A6** Đọc `explain(mode="formatted")` — khoanh đủ 5 điểm
 - [ ] **A9** `cache()` đo được (Storage tab)
@@ -97,9 +97,9 @@ Mỗi buổi có một **cổng ra**: chưa qua cổng thì đừng sang buổi 
 
 | ✓ | Bài | Lesson | Ưu tiên | File code | Số đo nằm ở đâu |
 |---|---|---|---|---|---|
-| ☐ | A1 bản đồ cluster | L1 | ⭐ | | §3.0 |
-| ☐ | A2 run vs run-local | L1 | ⭐ | | |
-| ☐ | A3 local vs cluster | L1 | ◆ | | §3.1 |
+| ✅ | A1 bản đồ cluster | L1 | ⭐ | `exercises/a01_cluster_map.py` | §3.0 |
+| ✅ | A2 run vs run-local | L1 | ⭐ | `exercises/a02_run_vs_local.py` | §3.0b |
+| ✅ | A3 local vs cluster | L1 | ◆ | `exercises/a03_local_vs_cluster.py` | §3.1 |
 | ☐ | A4 giết driver | L1 | ◆ | | |
 | ☐ | A5 lazy có đồng hồ | L2 | ⭐ | | §3.1 |
 | ☐ | A6 đọc explain() | L2 | ⭐ | | §3.7 |
@@ -148,14 +148,40 @@ Mỗi buổi có một **cổng ra**: chưa qua cổng thì đừng sang buổi 
 
 Không có phần này thì mọi con số bên dưới **vô nghĩa** (không ai tái lập được).
 
+*(Điền bằng `a01_cluster_map.py` — đừng chép tay từ UI.)* ✅ **ĐÃ LÀM (A1, demo mẫu)**
+
 | | |
 |---|---|
-| Máy | CPU ___ core, RAM ___ GB |
-| Spark | version ___ · master `___` · deploy-mode ___ |
-| Executor | ___ executor × ___ core × ___ GB |
-| Lệnh chạy | `make run-local F=...` / `make run F=...` |
-| Config đã đổi | `spark.sql.shuffle.partitions=___`, AQE=___, `maxPartitionBytes=___` |
-| Dữ liệu | Olist gốc (___ MB) / ×100 (___ GB) |
+| Máy host | Intel i5-12400 — **6 nhân vật lý / 12 luồng**, 15 GB RAM (còn trống ~8 GB), Linux |
+| Spark | version **3.4.1** · image `apache/spark:3.4.1` |
+| Cluster (`make run`) | master `spark://spark-master:7077` · deploy-mode **client** |
+| Local (`make run-local`) | master `local[2]` · deploy-mode **client** |
+| Worker | **2 worker × 3 core × 3 GB** *(khai trong `docker-compose.spark.yaml`)* → trần cứng 6 core / 6144 MB |
+| Executor thực tế | **2 executor × 3 core × 1049 MB** RAM-cho-data (heap xin 2 GB) |
+| Driver | chạy trong container `spark-submit` (host `8aca0779bea3`), **0 core** ở cluster mode, heap 1 GB |
+| defaultParallelism | **6** (cluster) · **2** (local) |
+| Config | `executor.cores=3` · `executor.memory=2g` *(đã tune, xem ghi chú)* · `shuffle.partitions=200` · AQE=**on** · `maxPartitionBytes=128m` |
+| Dữ liệu | Olist gốc: 9 file, ~120 MB (orders 17 MB, geolocation 58 MB) |
+
+> **⚠️ Ghi chú: tôi đã TUNE khỏi cấu hình mặc định của đề.** Mặc định là 1 worker × 4 core × 1 GB → 1 executor × 4 core × 434 MB. Lý do đổi: máy có 6 nhân vật lý và 8 GB trống, để mặc định thì phí 2/3 máy. Cách tính: chừa OS ~2 luồng + ~3 GB → ngân sách Spark 6 core / 6 GB; chọn 3 core/executor (nằm trong khoảng chuẩn 2–5); `min(6÷3, 6144÷2048) = 2 executor`.
+> **Mọi con số ở các bảng dưới đo trên cấu hình 6 core này, không phải 4 core mặc định.**
+
+**Bản đồ cluster (output của `a01_cluster_map.py`, cluster mode):**
+
+| vai trò | id | địa chỉ | cores | RAM cho data (maxMemory) |
+|---|---|---|---|---|
+| driver | driver | `8aca0779bea3:38437` | **0** | 434 MB |
+| executor | 0 | `172.22.0.3:40815` | **3** | 1049 MB |
+| executor | 1 | `172.22.0.4:36619` | **3** | 1049 MB |
+
+**Kiểm chứng công thức RAM:** `(2048 MB heap − 300 MB reserved) × 0.6 memory.fraction = 1048.8 MB` → **UI báo đúng 1048.8 MB. KHỚP.**
+→ Xin `--executor-memory 2g` **không** có nghĩa có 2 GB để chứa dữ liệu. Chỉ có **51%** số đó. Trần tuyệt đối là 60% (= `memory.fraction`), không bao giờ vượt được.
+→ Hệ quả: executor càng nhỏ càng lỗ, vì 300 MB reserved là **cố định** và bị trừ **trên mỗi executor**. Ở heap 512 MB thì chỉ còn **25%** dùng được.
+
+**Ba điều rút ra:**
+1. **Tổng task song song tối đa = 6** (cluster) / **2** (local). Task thứ 7 phải xếp hàng → đây chính là "wave" của lesson 3. Mọi con số partition ở track L4 phải đối chiếu với số **6** này (không phải 200!).
+2. Số executor **không phải thứ mình chọn trực tiếp** — nó là kết quả của `min(worker_cores ÷ executor.cores, worker_mem ÷ executor.memory)`. Mình chỉ chọn *kích cỡ một executor*, phép chia tự quyết số lượng. Xin quá trần → Spark **treo im lặng vô hạn**, không báo lỗi.
+3. **Ở `local[2]` KHÔNG có executor nào** — bảng chỉ có 1 dòng `driver` với 2 core. Driver JVM kiêm cả hai vai. Nhìn cột `cores` của driver là biết ngay mình đang ở mode nào: **0 = cluster, >0 = local**.
 
 > **Cách đo cho ổn định** (dùng chung cho mọi bảng):
 > ```python
@@ -167,6 +193,47 @@ Không có phần này thì mọi con số bên dưới **vô nghĩa** (không a
 >     # TODO: nhớ trả về cả ts để ghi vào bảng
 > ```
 > **Bẫy:** `fn` phải kết thúc bằng một **action** (`count()`, `collect()`, `write`). Nếu `fn` chỉ trả về DataFrame thì bạn vừa đo... 0.001 giây của lazy. Đây là lỗi benchmark #1.
+
+---
+
+### 3.0b · `make run` vs `make run-local` *(A2)* ✅
+
+*(Cùng một file `exercises/a02_run_vs_local.py`, chạy bằng 2 lệnh khác nhau.)*
+
+| | `make run` (cluster) | `make run-local` (local[2]) |
+|---|---|---|
+| `--master` trong Makefile | `spark://spark-master:7077` | `local[2]` |
+| `--deploy-mode` | không set → mặc định **client** | không set → mặc định **client** |
+| `sc.master` | `spark://spark-master:7077` | `local[2]` |
+| `socket.gethostname()` ở **driver** | `8aca0779bea3` | `8aca0779bea3` *(giống hệt!)* |
+| Số executor *(`getExecutorMemoryStatus().size()` − 1)* | **2** | **0** |
+| `print()` trong `map` hiện ở terminal của tôi? | **KHÔNG. 0 dòng.** | **CÓ. 5 dòng.** |
+| Hostname in ra **từ bên trong** `map` | `aac4de53a011`, `169b8cabad17` *(2 host KHÁC)* | `8aca0779bea3` *(cùng driver)* |
+| `collect()` trả về đúng `[2,4,6,8,10]`? | ✅ Có | ✅ Có |
+
+**Hai phát hiện, cả hai đều không có trong đề:**
+
+**1. Log của transformation đi ra `stderr`, không phải `stdout`.** Ở local mode, `make run-local ... 2>/dev/null` làm **biến mất sạch** 5 dòng `[TRANSFORMATION]` — tưởng code không chạy. PySpark chuyển hướng stdout của tiến trình Python worker sang **stderr** của JVM. Bài học: đừng bao giờ `2>/dev/null` khi đang debug PySpark.
+
+**2. Ở cluster mode log nằm trong `stderr` của executor, KHÔNG phải `stdout`.** Đề gợi ý đọc `work/<app-id>/*/stdout` — file đó **rỗng**. Chỗ thật:
+```bash
+docker exec spark-mastery-spark-worker-1 sh -c 'grep TRANSFORMATION /opt/spark/work/app-20260714073502-0006/*/stderr'
+# [TRANSFORMATION] xu ly 3 tren host aac4de53a011
+# [TRANSFORMATION] xu ly 4 tren host aac4de53a011
+# [TRANSFORMATION] xu ly 5 tren host aac4de53a011
+
+docker exec spark-mastery-spark-worker-2 sh -c 'grep TRANSFORMATION /opt/spark/work/app-20260714073502-0006/*/stderr'
+# [TRANSFORMATION] xu ly 1 tren host 169b8cabad17
+# [TRANSFORMATION] xu ly 2 tren host 169b8cabad17
+```
+**5 phần tử, 2 partition → log chia đôi đúng theo partition:** worker-2 giữ partition 0 (`[1,2]`), worker-1 giữ partition 1 (`[3,4,5]`). Không worker nào thấy đủ 5 dòng. Muốn ghép lại phải đi gom log từng máy — **đó chính là lý do log tập trung (ELK/Loki) tồn tại**.
+
+**Câu chốt:**
+> Tôi **không** được debug Spark bằng `print()` vì code trong transformation chạy **trên executor** — một tiến trình Python trong container khác, có hostname khác, và stdout của nó đổ vào file log của executor chứ không về terminal tôi đang nhìn. Ở cluster 100 máy thì nó nằm rải rác trên 100 nơi.
+>
+> Thay vào đó tôi dùng: **`df.show()` / `take(5)`** (kéo mẫu về **driver** — chỗ tôi nhìn thấy được), **Spark UI** (số task, thời gian, bytes), **`explain()`** (xem plan trước khi chạy), và **accumulator** khi cần đếm sự kiện xảy ra *trên* executor.
+
+**Điều bất ngờ nhất:** `socket.gethostname()` ở driver **giống hệt nhau** ở cả 2 mode (`8aca0779bea3`) — vì cả hai đều là `deploy-mode client`, driver luôn sống trong container `spark-submit`. Cái **thật sự** khác là hostname in ra *từ bên trong* transformation. Nhìn dòng đó là biết ngay mình đang ở mode nào.
 
 ---
 
@@ -182,6 +249,54 @@ Không có phần này thì mọi con số bên dưới **vô nghĩa** (không a
 **Đọc số này thế nào:** Olist bé (17MB), chênh lệch **giây** sẽ khiêm tốn và thậm chí có thể *ngược* (overhead > lợi ích). Nếu số của bạn không đạt ngưỡng — **đừng sửa số, hãy giải thích**. Bảng thật sự chấm điểm bạn là §3.5 (bytes), không phải bảng này.
 
 Giải thích của tôi cho query nào không đạt ngưỡng: _______________________________
+
+---
+
+#### A3 · "Cluster nhanh hơn" là NIỀM TIN SAI ✅
+
+*(`count()` trên `olist_customers` — 8.6 MB, 99.441 dòng. 3 lần chạy, lấy min lần 2–3. File: `exercises/a03_local_vs_cluster.py`)*
+
+| Mode | cores | partitions | startup | count() **lạnh** | count() **ấm** (wall) | Job Duration **ấm** (UI) | wall − job |
+|---|---|---|---|---|---|---|---|
+| `local[1]` | 1 | 1 | 798 ms | 378 ms | **120 ms** | 64 ms | 56 ms |
+| `local[*]` | 12 | 3 | 865 ms | 420 ms | **98 ms** 🥇 | 50 ms | 48 ms |
+| **cluster** | 6 | 3 | **1037 ms** | **940 ms** | **173 ms** 🐢 | 118 ms | 55 ms |
+
+**Kết quả: cluster THUA ở MỌI cột.** Chậm hơn `local[*]` **1.8×**, và thậm chí **thua cả `local[1]`** — 1 thợ đánh bại 6 thợ.
+
+**Vì sao — 5 overhead cluster có mà local không:**
+1. **Cấp executor** (startup +240 ms): master phải tìm worker, bật 2 JVM mới, chờ chúng đăng ký về driver. Local mode: driver JVM tự làm, 0 ms.
+2. **Serialize + gửi task qua mạng**: mỗi task phải đóng gói closure Python, đẩy qua TCP tới container khác. Local mode: gọi hàm trong cùng tiến trình.
+3. **Đọc file qua volume mount từ container khác** — không có data locality, đi qua lớp filesystem của Docker.
+4. **Gửi kết quả ngược về driver** qua mạng.
+5. **Bật tiến trình Python worker trên executor** — mỗi executor phải fork `python3` riêng.
+→ Nhìn cột **lạnh** thấy rõ nhất: 940 ms vs 378 ms (**2.5×**). Toàn bộ chênh lệch đó là *tiền thuê hạ tầng*, không phải tính toán.
+
+**Hai đồng hồ khác nhau ở chỗ nào** *(đề hỏi đúng câu này)*:
+- `time.time()` quanh `count()` = **driver chờ bao lâu** — gồm cả lập plan, tối ưu Catalyst, tạo job, gửi task, gom kết quả.
+- `Duration` trên Spark UI = **executor làm bao lâu** — chỉ tính từ lúc task bắt đầu chạy.
+- **Chênh lệch ≈ 50 ms ở CẢ BA MODE.** Con số này gần như không đổi → đó là **chi phí phía driver cố định** (Catalyst planning), không liên quan gì đến cluster. **Bài học: nhìn Spark UI thấy job 118 ms mà tưởng nhanh — thực ra bạn chờ 173 ms.** UI không kể phần nó không quản.
+
+**Phát hiện ngoài đề — vì sao `local[1]` ra 1 partition còn 2 mode kia ra 3?**
+Spark chia file theo công thức: `maxSplitBytes = min(maxPartitionBytes, max(openCostInBytes, totalBytes ÷ defaultParallelism))`
+- `local[1]`: `8.6 ÷ 1 = 8.6 MB` > openCost 4 MB → split 8.6 MB → **1 partition**
+- `local[*]` (12): `8.6 ÷ 12 = 0.7 MB` < 4 MB → split **4 MB** → `⌈8.6÷4⌉` = **3 partitions**
+- cluster (6): `8.6 ÷ 6 = 1.4 MB` < 4 MB → split **4 MB** → **3 partitions**
+
+→ **Số partition khi đọc file phụ thuộc `defaultParallelism`**, tức phụ thuộc cấu hình cluster — chứ không chỉ `maxPartitionBytes` như tôi tưởng. (Sẽ đào sâu ở A15.)
+
+**"Dữ liệu phải lớn cỡ nào thì cluster mới thắng?"**
+
+Câu trả lời thật lòng: **trên máy này, KHÔNG BAO GIỜ.** Vì "cluster" của tôi và `local[*]` chạy **trên cùng một CPU vật lý**. Cluster chỉ thêm overhead lên đúng phần cứng đó — nó không thể thắng chính nó cộng thêm chi phí. Thậm chí cluster còn *ít* core hơn (6 vs 12 luồng).
+
+Cluster chỉ thắng khi có thứ mà local **không thể có**:
+- **RAM**: máy còn ~8 GB. Dữ liệu > ~10–15 GB → local phải spill ra đĩa liên tục, cluster nhiều máy thì không.
+- **CPU**: cần > 12 luồng.
+- **Đĩa**: dataset lớn hơn ổ cứng một máy.
+
+*Ước lượng có căn cứ:* throughput đo được ≈ **88 MB/s** (8.6 MB / 98 ms). Overhead cố định của cluster ≈ **250 ms**. Để overhead chìm xuống dưới 5% tổng thời gian, job phải chạy > 5 s → dữ liệu > **~440 MB**. Nhưng đó mới chỉ là ngưỡng overhead *không còn đáng kể* — vẫn chưa phải ngưỡng cluster *thắng*. Muốn thắng thật, cần **thêm máy**, không phải thêm dữ liệu.
+
+> **Câu chốt:** cluster không phải là "chế độ nhanh". Nó là **cách xử lý thứ mà một máy không kham nổi** — và bạn trả cho nó bằng overhead. Olist 120 MB thì một cái laptop thừa sức; dùng cluster ở đây là **lỗ**.
 
 ---
 
