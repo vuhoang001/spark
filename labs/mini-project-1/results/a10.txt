@@ -1,0 +1,173 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master spark://spark-master:7077 /workspace/labs/mini-project-1/exercises/a10_du_doan_dag.py
+26/07/14 09:10:49 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:10:49 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:10:49 INFO ResourceUtils: ==============================================================
+26/07/14 09:10:49 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:10:49 INFO ResourceUtils: ==============================================================
+26/07/14 09:10:49 INFO SparkContext: Submitted application: a10-du-doan-dag
+26/07/14 09:10:49 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:10:49 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:10:49 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:10:49 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:10:49 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:10:49 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:10:49 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:10:49 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:10:49 INFO Utils: Successfully started service 'sparkDriver' on port 41191.
+26/07/14 09:10:49 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:10:49 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:10:49 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:10:49 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:10:49 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:10:49 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-240feb4a-737d-4cb3-a893-58cc4bb3c0ce
+26/07/14 09:10:49 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:10:49 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:10:50 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:10:50 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:10:50 INFO StandaloneAppClient$ClientEndpoint: Connecting to master spark://spark-master:7077...
+26/07/14 09:10:50 INFO TransportClientFactory: Successfully created connection to spark-master/172.22.0.2:7077 after 20 ms (0 ms spent in bootstraps)
+26/07/14 09:10:50 INFO StandaloneSchedulerBackend: Connected to Spark cluster with app ID app-20260714091050-0015
+26/07/14 09:10:50 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20260714091050-0015/0 on worker-20260714065715-172.22.0.3-38305 (172.22.0.3:38305) with 3 core(s)
+26/07/14 09:10:50 INFO StandaloneSchedulerBackend: Granted executor ID app-20260714091050-0015/0 on hostPort 172.22.0.3:38305 with 3 core(s), 1024.0 MiB RAM
+26/07/14 09:10:50 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20260714091050-0015/1 on worker-20260714065715-172.22.0.4-40037 (172.22.0.4:40037) with 3 core(s)
+26/07/14 09:10:50 INFO StandaloneSchedulerBackend: Granted executor ID app-20260714091050-0015/1 on hostPort 172.22.0.4:40037 with 3 core(s), 1024.0 MiB RAM
+26/07/14 09:10:50 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 36943.
+26/07/14 09:10:50 INFO NettyBlockTransferService: Server created on 8aca0779bea3:36943
+26/07/14 09:10:50 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:10:50 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 36943, None)
+26/07/14 09:10:50 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:36943 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 36943, None)
+26/07/14 09:10:50 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 36943, None)
+26/07/14 09:10:50 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 36943, None)
+26/07/14 09:10:50 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20260714091050-0015/0 is now RUNNING
+26/07/14 09:10:50 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20260714091050-0015/1 is now RUNNING
+26/07/14 09:10:50 INFO StandaloneSchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
+
+====================================================================================================
+A10 — SỔ DỰ ĐOÁN DAG (AQE=off, broadcast=off, schema tường minh)
+====================================================================================================
+master=spark://spark-master:7077 | defaultParallelism=6 | shuffle.partitions=200
+orders: 5 partition | items: 4 partition (= số task của stage scan)
+
+----------------------------------------------------------------------------------------------------
+>>> Q1  `read.csv.count()`
+----------------------------------------------------------------------------------------------------
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 1 | COMPLETE | count at <unknown>:0 | 5 | 99,441 | 295 B / 5 rec | 0 B / 0 rec |
+  | 2 | COMPLETE | count at <unknown>:0 | 1 | 0 | 0 B / 0 rec | 295 B / 5 rec |
+
+----------------------------------------------------------------------------------------------------
+>>> Q2  `read → filter → count()`
+----------------------------------------------------------------------------------------------------
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 3 | COMPLETE | count at <unknown>:0 | 5 | 96,478 | 295 B / 5 rec | 0 B / 0 rec |
+  | 4 | COMPLETE | count at <unknown>:0 | 1 | 0 | 0 B / 0 rec | 295 B / 5 rec |
+
+----------------------------------------------------------------------------------------------------
+>>> Q3  `read → groupBy(status).count().show()`
+----------------------------------------------------------------------------------------------------
++------------+-----+
+|order_status|count|
++------------+-----+
+|     shipped| 1107|
+|    canceled|  625|
+|    approved|    2|
+|    invoiced|  314|
+|     created|    5|
+|   delivered|96478|
+| unavailable|  609|
+|  processing|  301|
++------------+-----+
+
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 5 | COMPLETE | showString at <unknown>:0 | 5 | 99,441 | 2,557 B / 34 rec | 0 B / 0 rec |
+  | 6 | COMPLETE | showString at <unknown>:0 | 1 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 7 | SKIPPED | showString at <unknown>:0 | 5 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 8 | COMPLETE | showString at <unknown>:0 | 4 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 9 | SKIPPED | showString at <unknown>:0 | 5 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 10 | COMPLETE | showString at <unknown>:0 | 20 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 11 | SKIPPED | showString at <unknown>:0 | 5 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 12 | COMPLETE | showString at <unknown>:0 | 100 | 0 | 0 B / 0 rec | 1,352 B / 19 rec |
+  | 13 | SKIPPED | showString at <unknown>:0 | 5 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 14 | COMPLETE | showString at <unknown>:0 | 75 | 0 | 0 B / 0 rec | 1,205 B / 15 rec |
+
+----------------------------------------------------------------------------------------------------
+>>> Q4  `orders.join(items,'order_id').count()`
+----------------------------------------------------------------------------------------------------
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 15 | COMPLETE | count at <unknown>:0 | 4 | 112,650 | 3,522,576 B / 112,650 rec | 0 B / 0 rec |
+  | 16 | COMPLETE | count at <unknown>:0 | 5 | 99,441 | 3,600,523 B / 99,441 rec | 0 B / 0 rec |
+  | 17 | COMPLETE | count at <unknown>:0 | 200 | 0 | 11,799 B / 200 rec | 7,123,099 B / 212,091 rec |
+  | 18 | COMPLETE | count at <unknown>:0 | 1 | 0 | 0 B / 0 rec | 11,799 B / 200 rec |
+
+----------------------------------------------------------------------------------------------------
+>>> Q5  `read → distinct().count()`
+----------------------------------------------------------------------------------------------------
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 19 | COMPLETE | count at <unknown>:0 | 5 | 99,441 | 10,500,550 B / 99,441 rec | 0 B / 0 rec |
+  | 20 | COMPLETE | count at <unknown>:0 | 200 | 0 | 11,799 B / 200 rec | 10,500,550 B / 99,441 rec |
+  | 21 | COMPLETE | count at <unknown>:0 | 1 | 0 | 0 B / 0 rec | 11,799 B / 200 rec |
+
+----------------------------------------------------------------------------------------------------
+>>> Q6  `filter → count()` rồi `→ show()` (2 action)
+----------------------------------------------------------------------------------------------------
++--------------------+--------------------+------------+------------------------+-------------------+----------------------------+-----------------------------+-----------------------------+
+|            order_id|         customer_id|order_status|order_purchase_timestamp|  order_approved_at|order_delivered_carrier_date|order_delivered_customer_date|order_estimated_delivery_date|
++--------------------+--------------------+------------+------------------------+-------------------+----------------------------+-----------------------------+-----------------------------+
+|e481f51cbdc54678b...|9ef432eb625129730...|   delivered|     2017-10-02 10:56:33|2017-10-02 11:07:15|         2017-10-04 19:55:00|          2017-10-10 21:25:13|          2017-10-18 00:00:00|
+|53cdb2fc8bc7dce0b...|b0830fb4747a6c6d2...|   delivered|     2018-07-24 20:41:37|2018-07-26 03:24:27|         2018-07-26 14:31:00|          2018-08-07 15:27:45|          2018-08-13 00:00:00|
+|47770eb9100c2d0c4...|41ce2a54c0b03bf34...|   delivered|     2018-08-08 08:38:49|2018-08-08 08:55:23|         2018-08-08 13:50:00|          2018-08-17 18:06:29|          2018-09-04 00:00:00|
+|949d5b44dbf5de918...|f88197465ea7920ad...|   delivered|     2017-11-18 19:28:06|2017-11-18 19:45:59|         2017-11-22 13:39:59|          2017-12-02 00:28:42|          2017-12-15 00:00:00|
+|ad21c59c0840e6cb8...|8ab97904e6daea886...|   delivered|     2018-02-13 21:18:39|2018-02-13 22:20:29|         2018-02-14 19:46:34|          2018-02-16 18:17:02|          2018-02-26 00:00:00|
++--------------------+--------------------+------------+------------------------+-------------------+----------------------------+-----------------------------+-----------------------------+
+only showing top 5 rows
+
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 22 | COMPLETE | count at <unknown>:0 | 5 | 96,478 | 295 B / 5 rec | 0 B / 0 rec |
+  | 23 | COMPLETE | count at <unknown>:0 | 1 | 0 | 0 B / 0 rec | 295 B / 5 rec |
+  | 24 | COMPLETE | showString at <unknown>:0 | 1 | 6 | 0 B / 0 rec | 0 B / 0 rec |
+
+====================================================================================================
+BẢNG DÁN VÀO PROGRESS.md §3.2
+====================================================================================================
+
+| # | Query | Job (đoán) | Job (thật) | Stage (đoán) | Stage (thật) | Shuffle (đoán) | Shuffle (thật) | ✓? |
+|---|---|---|---|---|---|---|---|---|
+| 1 | `read.csv.count()` | 1 | 1 | 2 | 2 | 1 | 1 | ✓ |
+| 2 | `read → filter → count()` | 1 | 1 | 2 | 2 | 1 | 1 | ✓ |
+| 3 | `read → groupBy(status).count().show()` | 1 | 5 | 2 | 6 | 1 | 1 | ✗ |
+| 4 | `orders.join(items,'order_id').count()` | 1 | 1 | 4 | 4 | 3 | 3 | ✓ |
+| 5 | `read → distinct().count()` | 1 | 1 | 3 | 3 | 2 | 2 | ✓ |
+| 6 | `filter → count()` rồi `→ show()` (2 action) | 2 | 2 | 3 | 3 | 1 | 1 | ✓ |
+
+**Tỉ lệ đoán đúng: 5/6.**
+
+====================================================================================================
+PHẦN "TÔI ĐOÁN SAI Ở ĐÂU" — không có phần này coi như CHƯA LÀM BÀI
+====================================================================================================
+
+[Q3] TÔI ĐOÁN: 1 job / 2 stage / 1 shuffle
+     THỰC TẾ : 5 job / 6 stage chạy (+4 skipped) / 1 shuffle
+     LÝ LẼ ĐÚNG: groupBy = 1 shuffle -> 2 stage. show() chỉ lấy 20 dòng đầu của kết quả đã gom, không đẻ thêm job. Lưu ý: stage sau shuffle có 200 task (spark.sql.shuffle.partitions) cho vỏn vẹn 8 nhóm -> đó là bài A16.
+
+--- CÔNG THỨC RÚT RA (điền vào PROGRESS §3.2) ---
+    số stage của MỘT job = số Exchange (shuffle) thực sự chạy + 1
+
+Nó SAI (hoặc gây bất ngờ) trong 4 trường hợp — cả 4 đều gặp ở bài này:
+  1. Bạn quên count() TỰ NÓ đẻ một Exchange (gom partial count về 1 partition).
+     -> q1 tưởng 1 stage, thật ra 2. Đây là lỗi phổ biến nhất.
+  2. Nhiều action = nhiều JOB, phải cộng stage của từng job (q6).
+  3. Join hai nguồn: hai stage scan chạy SONG SONG rồi mới nhập lại. Công thức
+     vẫn đúng (4 = 3+1) nhưng DAG không còn là một đường thẳng.
+  4. Stage SKIPPED: nằm trong job nhưng KHÔNG chạy -> "số stage tab Jobs hiện"
+     lớn hơn "số stage thật sự chạy". Đó là bài A12.
+Và nó sai hẳn khi BẬT AQE (bài A14) hoặc khi Spark chọn BroadcastHashJoin
+(broadcast = không shuffle -> q4 chỉ còn 2 stage / 1 shuffle).
+
+====================================================================================================
+

@@ -1,0 +1,77 @@
+26/07/14 08:58:03 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 08:58:03 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 08:58:03 INFO ResourceUtils: ==============================================================
+26/07/14 08:58:03 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 08:58:03 INFO ResourceUtils: ==============================================================
+26/07/14 08:58:03 INFO SparkContext: Submitted application: a04-kill-oom
+26/07/14 08:58:03 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 08:58:03 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 08:58:03 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 08:58:03 INFO SecurityManager: Changing view acls to: root
+26/07/14 08:58:03 INFO SecurityManager: Changing modify acls to: root
+26/07/14 08:58:03 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 08:58:03 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 08:58:03 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 08:58:03 INFO Utils: Successfully started service 'sparkDriver' on port 41663.
+26/07/14 08:58:03 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 08:58:03 ERROR SparkContext: Error initializing SparkContext.
+java.lang.IllegalArgumentException: System memory 268435456 must be at least 471859200. Please increase heap size using the --driver-memory option or spark.driver.memory in Spark configuration.
+	at org.apache.spark.memory.UnifiedMemoryManager$.getMaxMemory(UnifiedMemoryManager.scala:221)
+	at org.apache.spark.memory.UnifiedMemoryManager$.apply(UnifiedMemoryManager.scala:201)
+	at org.apache.spark.SparkEnv$.create(SparkEnv.scala:325)
+	at org.apache.spark.SparkEnv$.createDriverEnv(SparkEnv.scala:196)
+	at org.apache.spark.SparkContext.createSparkEnv(SparkContext.scala:279)
+	at org.apache.spark.SparkContext.<init>(SparkContext.scala:464)
+	at org.apache.spark.api.java.JavaSparkContext.<init>(JavaSparkContext.scala:58)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(Unknown Source)
+	at java.base/java.lang.reflect.Constructor.newInstance(Unknown Source)
+	at py4j.reflection.MethodInvoker.invoke(MethodInvoker.java:247)
+	at py4j.reflection.ReflectionEngine.invoke(ReflectionEngine.java:374)
+	at py4j.Gateway.invoke(Gateway.java:238)
+	at py4j.commands.ConstructorCommand.invokeConstructor(ConstructorCommand.java:80)
+	at py4j.commands.ConstructorCommand.execute(ConstructorCommand.java:69)
+	at py4j.ClientServerConnection.waitForCommands(ClientServerConnection.java:182)
+	at py4j.ClientServerConnection.run(ClientServerConnection.java:106)
+	at java.base/java.lang.Thread.run(Unknown Source)
+26/07/14 08:58:03 INFO SparkContext: SparkContext is stopping with exitCode 0.
+26/07/14 08:58:03 INFO SparkContext: Successfully stopped SparkContext
+Traceback (most recent call last):
+  File "/workspace/labs/mini-project-1/exercises/a04_kill_driver.py", line 283, in <module>
+    mode_kill(mode)
+  File "/workspace/labs/mini-project-1/exercises/a04_kill_driver.py", line 97, in mode_kill
+    spark = build(f"a04-{which}", extra)
+  File "/workspace/labs/mini-project-1/exercises/a04_kill_driver.py", line 83, in build
+    return b.getOrCreate()
+  File "/opt/spark/python/lib/pyspark.zip/pyspark/sql/session.py", line 477, in getOrCreate
+  File "/opt/spark/python/lib/pyspark.zip/pyspark/context.py", line 512, in getOrCreate
+  File "/opt/spark/python/lib/pyspark.zip/pyspark/context.py", line 200, in __init__
+  File "/opt/spark/python/lib/pyspark.zip/pyspark/context.py", line 287, in _do_init
+  File "/opt/spark/python/lib/pyspark.zip/pyspark/context.py", line 417, in _initialize_context
+  File "/opt/spark/python/lib/py4j-0.10.9.7-src.zip/py4j/java_gateway.py", line 1587, in __call__
+  File "/opt/spark/python/lib/py4j-0.10.9.7-src.zip/py4j/protocol.py", line 326, in get_return_value
+py4j.protocol.Py4JJavaError: An error occurred while calling None.org.apache.spark.api.java.JavaSparkContext.
+: java.lang.IllegalArgumentException: System memory 268435456 must be at least 471859200. Please increase heap size using the --driver-memory option or spark.driver.memory in Spark configuration.
+	at org.apache.spark.memory.UnifiedMemoryManager$.getMaxMemory(UnifiedMemoryManager.scala:221)
+	at org.apache.spark.memory.UnifiedMemoryManager$.apply(UnifiedMemoryManager.scala:201)
+	at org.apache.spark.SparkEnv$.create(SparkEnv.scala:325)
+	at org.apache.spark.SparkEnv$.createDriverEnv(SparkEnv.scala:196)
+	at org.apache.spark.SparkContext.createSparkEnv(SparkContext.scala:279)
+	at org.apache.spark.SparkContext.<init>(SparkContext.scala:464)
+	at org.apache.spark.api.java.JavaSparkContext.<init>(JavaSparkContext.scala:58)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(Unknown Source)
+	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(Unknown Source)
+	at java.base/java.lang.reflect.Constructor.newInstance(Unknown Source)
+	at py4j.reflection.MethodInvoker.invoke(MethodInvoker.java:247)
+	at py4j.reflection.ReflectionEngine.invoke(ReflectionEngine.java:374)
+	at py4j.Gateway.invoke(Gateway.java:238)
+	at py4j.commands.ConstructorCommand.invokeConstructor(ConstructorCommand.java:80)
+	at py4j.commands.ConstructorCommand.execute(ConstructorCommand.java:69)
+	at py4j.ClientServerConnection.waitForCommands(ClientServerConnection.java:182)
+	at py4j.ClientServerConnection.run(ClientServerConnection.java:106)
+	at java.base/java.lang.Thread.run(Unknown Source)
+
+26/07/14 08:58:03 INFO ShutdownHookManager: Shutdown hook called
+26/07/14 08:58:03 INFO ShutdownHookManager: Deleting directory /tmp/spark-8b035402-cd3f-42b4-9a18-5906b8d4d765

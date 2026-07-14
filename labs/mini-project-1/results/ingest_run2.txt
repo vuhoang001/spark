@@ -1,0 +1,149 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master spark://spark-master:7077 /workspace/labs/mini-project-1/src/ingest.py
+26/07/14 09:45:49 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:45:49 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:45:49 INFO ResourceUtils: ==============================================================
+26/07/14 09:45:49 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:45:49 INFO ResourceUtils: ==============================================================
+26/07/14 09:45:49 INFO SparkContext: Submitted application: mp1-ingest
+26/07/14 09:45:49 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:45:49 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:45:49 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:45:49 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:45:49 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:45:49 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:45:49 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:45:49 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:45:49 INFO Utils: Successfully started service 'sparkDriver' on port 44209.
+26/07/14 09:45:49 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:45:49 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:45:49 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:45:49 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:45:49 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:45:49 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-216e87dc-21b0-4add-af26-d14b7e52b1d8
+26/07/14 09:45:49 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:45:49 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:45:49 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:45:49 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:45:49 INFO StandaloneAppClient$ClientEndpoint: Connecting to master spark://spark-master:7077...
+26/07/14 09:45:49 INFO TransportClientFactory: Successfully created connection to spark-master/172.22.0.2:7077 after 18 ms (0 ms spent in bootstraps)
+26/07/14 09:45:49 INFO StandaloneSchedulerBackend: Connected to Spark cluster with app ID app-20260714094549-0034
+26/07/14 09:45:49 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20260714094549-0034/0 on worker-20260714065715-172.22.0.3-38305 (172.22.0.3:38305) with 3 core(s)
+26/07/14 09:45:49 INFO StandaloneSchedulerBackend: Granted executor ID app-20260714094549-0034/0 on hostPort 172.22.0.3:38305 with 3 core(s), 1024.0 MiB RAM
+26/07/14 09:45:49 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20260714094549-0034/1 on worker-20260714065715-172.22.0.4-40037 (172.22.0.4:40037) with 3 core(s)
+26/07/14 09:45:49 INFO StandaloneSchedulerBackend: Granted executor ID app-20260714094549-0034/1 on hostPort 172.22.0.4:40037 with 3 core(s), 1024.0 MiB RAM
+26/07/14 09:45:49 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 40973.
+26/07/14 09:45:49 INFO NettyBlockTransferService: Server created on 8aca0779bea3:40973
+26/07/14 09:45:49 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:45:49 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 40973, None)
+26/07/14 09:45:49 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:40973 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 40973, None)
+26/07/14 09:45:49 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 40973, None)
+26/07/14 09:45:49 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 40973, None)
+26/07/14 09:45:49 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20260714094549-0034/1 is now RUNNING
+26/07/14 09:45:49 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20260714094549-0034/0 is now RUNNING
+26/07/14 09:45:50 INFO StandaloneSchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
+==============================================================================
+MINI PROJECT 1 — INGEST (Checkpoint 1 + 2)
+==============================================================================
+  master                    = spark://spark-master:7077
+  applicationId             = app-20260714094549-0034
+  defaultParallelism        = 2
+  shuffle.partitions        = 200
+  AQE                       = true
+  partitionOverwriteMode    = dynamic   <-- PHẢI là dynamic
+
+==============================================================================
+CHECKPOINT 1 — đọc, tách sạch/hỏng, quarantine
+==============================================================================
+
+--- [orders] /workspace/data/olist/olist_orders_dataset.csv
+    dòng THÔ (wc -l, kể cả header) : 99442
+    dòng Spark parse ra            : 99441   (= 99442 − 1 header)
+      trong đó SẠCH                : 99441
+      trong đó HỎNG (quarantine)   : 0   -> /workspace/data/output/quarantine/orders
+    schema đọc được:
+      root
+       |-- order_id: string (nullable = true)
+       |-- customer_id: string (nullable = true)
+       |-- order_status: string (nullable = true)
+       |-- order_purchase_timestamp: timestamp (nullable = true)
+       |-- order_approved_at: timestamp (nullable = true)
+       |-- order_delivered_carrier_date: timestamp (nullable = true)
+       |-- order_delivered_customer_date: timestamp (nullable = true)
+       |-- order_estimated_delivery_date: timestamp (nullable = true)
+       |-- source_file: string (nullable = false)
+
+--- [order_items] /workspace/data/olist/olist_order_items_dataset.csv
+    dòng THÔ (wc -l, kể cả header) : 112651
+    dòng Spark parse ra            : 112650   (= 112651 − 1 header)
+      trong đó SẠCH                : 112650
+      trong đó HỎNG (quarantine)   : 0   -> /workspace/data/output/quarantine/order_items
+    schema đọc được:
+      root
+       |-- order_id: string (nullable = true)
+       |-- order_item_id: integer (nullable = true)
+       |-- product_id: string (nullable = true)
+       |-- seller_id: string (nullable = true)
+       |-- shipping_limit_date: timestamp (nullable = true)
+       |-- price: double (nullable = true)
+       |-- freight_value: double (nullable = true)
+       |-- source_file: string (nullable = false)
+
+--- [customers] /workspace/data/olist/olist_customers_dataset.csv
+    dòng THÔ (wc -l, kể cả header) : 99442
+    dòng Spark parse ra            : 99441   (= 99442 − 1 header)
+      trong đó SẠCH                : 99441
+      trong đó HỎNG (quarantine)   : 0   -> /workspace/data/output/quarantine/customers
+    schema đọc được:
+      root
+       |-- customer_id: string (nullable = true)
+       |-- customer_unique_id: string (nullable = true)
+       |-- customer_zip_code_prefix: string (nullable = true)
+       |-- customer_city: string (nullable = true)
+       |-- customer_state: string (nullable = true)
+       |-- source_file: string (nullable = false)
+
+==============================================================================
+CHECKPOINT 2 — derive order_date, ghi Parquet phân vùng, idempotent
+==============================================================================
+
+[orders] số dòng có order_date NULL = 0  -> đẩy vào quarantine (xem lý do trong code, không dồn vào __unknown__)
+
+--- [orders_clean] ghi xong trong 3.4s -> /workspace/data/output/silver/orders_clean
+    thư mục order_date=... : 634
+    file part-*                : 634   (mong đợi = số thư mục, tức 1 file/ngày)
+    đọc lại đếm được           : 99441 dòng
+
+[order_items] số dòng KHÔNG khớp order_id nào (mồ côi) = 0
+
+--- [items_clean] ghi xong trong 2.5s -> /workspace/data/output/silver/items_clean
+    thư mục order_date=... : 616
+    file part-*                : 616   (mong đợi = số thư mục, tức 1 file/ngày)
+    đọc lại đếm được           : 112650 dòng
+
+--- [customers_clean] ghi xong 0.5s, KHÔNG partition, 1 file, 99441 dòng
+    (coalesce(1): 8.6 MB thì 1 file là đúng. Nhiều file nhỏ chỉ tổ hại — A35.)
+
+==============================================================================
+BẢNG DATA QUALITY (dán vào PROGRESS §3.6)
+==============================================================================
+
+| Bảng | Dòng thô (wc -l) | Dòng parse | Dòng hỏng (quarantine) | Dòng NULL date | Vào bảng chính | Khớp? |
+|---|---|---|---|---|---|---|
+| orders | 99442 | 99441 | 0 | 0 | 99441 | ✅ |
+| order_items | 112651 | 112650 | 0 | 0 *(mồ côi)* | 112650 | ✅ |
+| customers | 99442 | 99441 | 0 | — | 99441 | ✅ |
+
+Quy tắc kiểm: (dòng thô − 1 header) = hỏng + null_date/mồ côi + vào bảng chính.
+Không khớp = có dòng bốc hơi ở đâu đó = PHẢI điều tra, không được bỏ qua.
+
+==============================================================================
+BẰNG CHỨNG IDEMPOTENT — chạy lại file này lần 2, 3 và so 3 dòng dưới đây
+==============================================================================
+
+| Bảng | count() toàn bảng | số thư mục partition | số file part-* | count() 2018-07-02 |
+|---|---|---|---|---|
+| orders_clean | 99441 | 634 | 634 | 195 |
+| items_clean | 112650 | 616 | 616 | 217 |
+
+Tổng thời gian pipeline: 23.2s
+Chạy lại chính lệnh này lần nữa -> 3 con số trên PHẢI không đổi. Đổi = mất 15 điểm.

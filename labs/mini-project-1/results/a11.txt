@@ -1,0 +1,170 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master spark://spark-master:7077 /workspace/labs/mini-project-1/exercises/a11_ranh_gioi_stage.py
+26/07/14 09:11:33 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:11:33 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:11:33 INFO ResourceUtils: ==============================================================
+26/07/14 09:11:33 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:11:33 INFO ResourceUtils: ==============================================================
+26/07/14 09:11:33 INFO SparkContext: Submitted application: a11-ranh-gioi-stage
+26/07/14 09:11:33 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:11:33 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:11:33 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:11:33 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:11:33 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:11:33 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:11:33 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:11:33 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:11:33 INFO Utils: Successfully started service 'sparkDriver' on port 38029.
+26/07/14 09:11:33 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:11:33 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:11:33 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:11:33 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:11:33 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:11:33 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-764b5ba8-f638-4235-b5c6-68bbaa3d261f
+26/07/14 09:11:33 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:11:33 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:11:33 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:11:33 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:11:33 INFO StandaloneAppClient$ClientEndpoint: Connecting to master spark://spark-master:7077...
+26/07/14 09:11:33 INFO TransportClientFactory: Successfully created connection to spark-master/172.22.0.2:7077 after 20 ms (0 ms spent in bootstraps)
+26/07/14 09:11:33 INFO StandaloneSchedulerBackend: Connected to Spark cluster with app ID app-20260714091133-0016
+26/07/14 09:11:33 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20260714091133-0016/0 on worker-20260714065715-172.22.0.3-38305 (172.22.0.3:38305) with 3 core(s)
+26/07/14 09:11:33 INFO StandaloneSchedulerBackend: Granted executor ID app-20260714091133-0016/0 on hostPort 172.22.0.3:38305 with 3 core(s), 1024.0 MiB RAM
+26/07/14 09:11:33 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20260714091133-0016/1 on worker-20260714065715-172.22.0.4-40037 (172.22.0.4:40037) with 3 core(s)
+26/07/14 09:11:33 INFO StandaloneSchedulerBackend: Granted executor ID app-20260714091133-0016/1 on hostPort 172.22.0.4:40037 with 3 core(s), 1024.0 MiB RAM
+26/07/14 09:11:33 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 43629.
+26/07/14 09:11:33 INFO NettyBlockTransferService: Server created on 8aca0779bea3:43629
+26/07/14 09:11:33 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:11:33 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 43629, None)
+26/07/14 09:11:33 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:43629 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 43629, None)
+26/07/14 09:11:33 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 43629, None)
+26/07/14 09:11:33 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20260714091133-0016/0 is now RUNNING
+26/07/14 09:11:33 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 43629, None)
+26/07/14 09:11:33 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20260714091133-0016/1 is now RUNNING
+26/07/14 09:11:34 INFO StandaloneSchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
+
+====================================================================================================
+A11 — RANH GIỚI STAGE (AQE=off)
+====================================================================================================
+master=spark://spark-master:7077 | defaultParallelism=6 | items đọc vào 4 partition
+Spark UI: http://8aca0779bea3:4040   (mở tab Stages -> DAG Visualization để CHỤP ẢNH 3 DAG)
+
+----------------------------------------------------------------------------------------------------
+>>> 10×withColumn + filter + select (narrow thuần)  |  action = write()
+----------------------------------------------------------------------------------------------------
+  ┌─ stage 1   parquet at <unknown>:0       task=4   
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 1 | COMPLETE | parquet at <unknown>:0 | 4 | 111,381 | 0 B / 0 rec | 0 B / 0 rec |
+
+----------------------------------------------------------------------------------------------------
+>>> 10×withColumn + filter + select (narrow thuần)  |  action = count()
+----------------------------------------------------------------------------------------------------
+  ┌─ stage 2   count at <unknown>:0         task=4   
+  └─▶ SHUFFLE (236 bytes ghi ra local disk executor)
+  ┌─ stage 3   count at <unknown>:0         task=1   
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 2 | COMPLETE | count at <unknown>:0 | 4 | 111,381 | 236 B / 4 rec | 0 B / 0 rec |
+  | 3 | COMPLETE | count at <unknown>:0 | 1 | 0 | 0 B / 0 rec | 236 B / 4 rec |
+
+----------------------------------------------------------------------------------------------------
+>>> v1 + repartition(4) ở giữa  |  action = write()
+----------------------------------------------------------------------------------------------------
+  ┌─ stage 4   parquet at <unknown>:0       task=4   
+  └─▶ SHUFFLE (7,403,148 bytes ghi ra local disk executor)
+  ┌─ stage 5   parquet at <unknown>:0       task=4   
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 4 | COMPLETE | parquet at <unknown>:0 | 4 | 111,381 | 7,403,148 B / 111,381 rec | 0 B / 0 rec |
+  | 5 | COMPLETE | parquet at <unknown>:0 | 4 | 0 | 0 B / 0 rec | 7,403,148 B / 111,381 rec |
+
+----------------------------------------------------------------------------------------------------
+>>> v1 + repartition(4) ở giữa  |  action = count()
+----------------------------------------------------------------------------------------------------
+  ┌─ stage 6   count at <unknown>:0         task=4   
+  └─▶ SHUFFLE (2,588 bytes ghi ra local disk executor)
+  ┌─ stage 7   count at <unknown>:0         task=4   
+  └─▶ SHUFFLE (236 bytes ghi ra local disk executor)
+  ┌─ stage 8   count at <unknown>:0         task=1   
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 6 | COMPLETE | count at <unknown>:0 | 4 | 111,381 | 2,588 B / 111,381 rec | 0 B / 0 rec |
+  | 7 | COMPLETE | count at <unknown>:0 | 4 | 0 | 236 B / 4 rec | 2,588 B / 111,381 rec |
+  | 8 | COMPLETE | count at <unknown>:0 | 1 | 0 | 0 B / 0 rec | 236 B / 4 rec |
+
+----------------------------------------------------------------------------------------------------
+>>> v2 + groupBy(seller_id).agg()  |  action = write()
+----------------------------------------------------------------------------------------------------
+  ┌─ stage 9   parquet at <unknown>:0       task=4   
+  └─▶ SHUFFLE (2,692,129 bytes ghi ra local disk executor)
+  ┌─ stage 10  parquet at <unknown>:0       task=4   
+  └─▶ SHUFFLE (481,889 bytes ghi ra local disk executor)
+  ┌─ stage 11  parquet at <unknown>:0       task=200 
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 9 | COMPLETE | parquet at <unknown>:0 | 4 | 111,381 | 2,692,129 B / 111,381 rec | 0 B / 0 rec |
+  | 10 | COMPLETE | parquet at <unknown>:0 | 4 | 0 | 481,889 B / 9,296 rec | 2,692,129 B / 111,381 rec |
+  | 11 | COMPLETE | parquet at <unknown>:0 | 200 | 0 | 0 B / 0 rec | 481,889 B / 9,296 rec |
+
+----------------------------------------------------------------------------------------------------
+>>> v2 + groupBy(seller_id).agg()  |  action = count()
+----------------------------------------------------------------------------------------------------
+  ┌─ stage 12  count at <unknown>:0         task=4   
+  └─▶ SHUFFLE (956,973 bytes ghi ra local disk executor)
+  ┌─ stage 13  count at <unknown>:0         task=4   
+  └─▶ SHUFFLE (394,314 bytes ghi ra local disk executor)
+  ┌─ stage 14  count at <unknown>:0         task=200 
+  └─▶ SHUFFLE (11,800 bytes ghi ra local disk executor)
+  ┌─ stage 15  count at <unknown>:0         task=1   
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 12 | COMPLETE | count at <unknown>:0 | 4 | 111,381 | 956,973 B / 111,381 rec | 0 B / 0 rec |
+  | 13 | COMPLETE | count at <unknown>:0 | 4 | 0 | 394,314 B / 9,464 rec | 956,973 B / 111,381 rec |
+  | 14 | COMPLETE | count at <unknown>:0 | 200 | 0 | 11,800 B / 200 rec | 394,314 B / 9,464 rec |
+  | 15 | COMPLETE | count at <unknown>:0 | 1 | 0 | 0 B / 0 rec | 11,800 B / 200 rec |
+
+====================================================================================================
+BẢNG TỔNG — dán vào report (A11)
+====================================================================================================
+
+| pipeline | action | job | stage | shuffle | stage == shuffle+1 ? | số task từng stage |
+|---|---|---|---|---|---|---|
+| 10×withColumn + filter + select (narrow thuần) | `write()` | 1 | 1 | 0 | ĐÚNG | 4 |
+| 10×withColumn + filter + select (narrow thuần) | `count()` | 1 | 2 | 1 | ĐÚNG | 4 → 1 |
+| v1 + repartition(4) ở giữa | `write()` | 1 | 2 | 1 | ĐÚNG | 4 → 4 |
+| v1 + repartition(4) ở giữa | `count()` | 1 | 3 | 2 | ĐÚNG | 4 → 4 → 1 |
+| v2 + groupBy(seller_id).agg() | `write()` | 1 | 3 | 2 | ĐÚNG | 4 → 4 → 200 |
+| v2 + groupBy(seller_id).agg() | `count()` | 1 | 4 | 3 | ĐÚNG | 4 → 4 → 200 → 1 |
+
+--- CÔNG THỨC TỰ RÚT RA ---
+    số stage = số shuffle + 1
+
+Bằng chứng (cột `write` — action không tự thêm shuffle):
+    v1  0 shuffle -> 1 stage      (10 withColumn + filter + select vẫn 1 stage!)
+    v2  1 shuffle -> 2 stage      (chèn repartition(4) = +1 shuffle = +1 stage)
+    v3  2 shuffle -> 3 stage      (thêm groupBy       = +1 shuffle = +1 stage)
+
+--- CÔNG THỨC SAI KHI NÀO? (câu hỏi thật của bài) ---
+1. Khi ACTION tự thêm shuffle. Nhìn cùng pipeline, đổi action:
+       v1: write -> 1 stage / 0 shuffle   |   count -> 2 stage / 1 shuffle
+   count() cài thêm Exchange SinglePartition để gom partial count. Công thức
+   vẫn đúng, chỉ là bạn đếm THIẾU một shuffle mà mắt không nhìn thấy trong code.
+2. Khi có nhiều action -> nhiều job, phải cộng từng job (bài A10 q6).
+3. Khi có stage SKIPPED (shuffle reuse) -> tab Jobs hiện số stage lớn hơn số
+   stage thật sự chạy (bài A12).
+4. Khi BẬT AQE -> AQE có thể gộp partition/đổi join -> DAG khác (bài A14).
+5. Khi join 2 nguồn: DAG rẽ nhánh, 2 stage scan chạy SONG SONG. Công thức
+   (stage = shuffle + 1) vẫn ĐÚNG, nhưng đừng tưởng tượng DAG là 1 đường thẳng.
+
+--- ĐỌC SỐ TASK ---
+Số task của một stage = số partition mà stage đó xử lý:
+    stage scan       -> partition lúc đọc file (do maxPartitionBytes, bài A15)
+    stage sau repartition(4) -> đúng 4 task
+    stage sau groupBy        -> 200 task (spark.sql.shuffle.partitions — bài A16:
+                                200 task cho vài nghìn seller là chuyện khác,
+                                nhưng nếu chỉ có 8 nhóm thì 192 task chạy KHÔNG)
+
+Ảnh DAG: mở http://8aca0779bea3:4040 -> tab Stages -> DAG Visualization, chụp 3 cái (v1/v2/v3).
+Nếu job đã xong mất UI: xem lại ở Spark History, hoặc thêm time.sleep() trước spark.stop().
+====================================================================================================
+

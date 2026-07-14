@@ -1,0 +1,92 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master 'local[2]' /workspace/labs/mini-project-1/exercises/a25_four_save_modes.py
+26/07/14 09:43:31 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:43:31 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:43:31 INFO ResourceUtils: ==============================================================
+26/07/14 09:43:31 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:43:31 INFO ResourceUtils: ==============================================================
+26/07/14 09:43:31 INFO SparkContext: Submitted application: a25-save-modes
+26/07/14 09:43:31 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:43:31 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:43:31 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:43:31 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:43:31 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:43:31 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:43:31 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:43:31 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:43:31 INFO Utils: Successfully started service 'sparkDriver' on port 45335.
+26/07/14 09:43:31 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:43:31 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:43:31 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:43:31 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:43:31 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:43:31 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-08b0d914-5c6b-4f97-bc9f-41c5a1da427c
+26/07/14 09:43:31 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:43:31 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:43:31 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:43:31 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:43:31 INFO Executor: Starting executor ID driver on host 8aca0779bea3
+26/07/14 09:43:31 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/07/14 09:43:31 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 45443.
+26/07/14 09:43:31 INFO NettyBlockTransferService: Server created on 8aca0779bea3:45443
+26/07/14 09:43:31 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:43:31 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 45443, None)
+26/07/14 09:43:31 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:45443 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 45443, None)
+26/07/14 09:43:31 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 45443, None)
+26/07/14 09:43:31 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 45443, None)
+DataFrame nguồn: 195 dòng (đơn ngày 2018-07-02). Ghi cùng DF này 2 LẦN vào cùng 1 thư mục, với 4 mode khác nhau.
+
+==============================================================================
+MODE = overwrite
+==============================================================================
+  lần 1: ghi OK -> đọc lại 195 dòng, 2 file part-*
+  lần 2: ghi OK -> đọc lại 195 dòng, 2 file part-*
+==============================================================================
+MODE = append
+==============================================================================
+  lần 1: ghi OK -> đọc lại 195 dòng, 2 file part-*
+  lần 2: ghi OK -> đọc lại 390 dòng, 4 file part-*
+==============================================================================
+MODE = errorifexists
+==============================================================================
+  lần 1: ghi OK -> đọc lại 195 dòng, 2 file part-*
+  lần 2: NÉM LỖI -> pyspark.errors.exceptions.captured.AnalysisException: [PATH_ALREADY_EXISTS] Path file:/workspace/data/bench/a25_savemode/errorifexists already exists. Set mode as "overwrite" to overwrite the existing path.
+         dữ liệu cũ còn nguyên: 195 dòng
+==============================================================================
+MODE = ignore
+==============================================================================
+  lần 1: ghi OK -> đọc lại 195 dòng, 2 file part-*
+  lần 2: ghi OK -> đọc lại 195 dòng, 2 file part-*
+
+==============================================================================
+BẢNG (dán vào PROGRESS §3.6 'Save mode')
+==============================================================================
+
+| mode | count sau lần 1 | count sau lần 2 | có exception? | Idempotent? |
+|---|---|---|---|---|
+| `overwrite` | 195 | 195 | lần1=KHÔNG, lần2=KHÔNG | CÓ |
+| `append` ⚠️ | 195 | 390 | lần1=KHÔNG, lần2=KHÔNG | KHÔNG — nhân 2× |
+| `errorifexists` *(mặc định!)* | 195 | 195 (ghi bị CHẶN) | lần1=KHÔNG, lần2=CÓ | CÓ (theo nghĩa 'không làm hỏng gì', nhưng job FAIL) |
+| `ignore` | 195 | 195 | lần1=KHÔNG, lần2=KHÔNG | CÓ |
+
+ĐỌC BẢNG:
+
+* `overwrite`  — XOÁ đích rồi ghi lại. Chạy 2 lần ra CÙNG con số => IDEMPOTENT.
+                 Nhưng đọc kỹ A26: với bảng CÓ PARTITION, "xoá đích" mặc định
+                 nghĩa là xoá CẢ BẢNG, không phải xoá phần bạn đang ghi. Đó mới
+                 là chỗ chết người thật sự.
+* `append`     — CÁI BẪY −15 ĐIỂM. Không lỗi, không cảnh báo, chỉ là dữ liệu nhân đôi.
+                 Nguy hiểm vì nó là mode DUY NHẤT sai mà vẫn "chạy thành công".
+                 Airflow retry 3 lần = dữ liệu ×3. Không ai phát hiện cho tới lúc
+                 kế toán hỏi vì sao doanh thu gấp ba.
+* `errorifexists` — MẶC ĐỊNH. An toàn nhất cho người mới (không im lặng phá gì),
+                 nhưng KHÔNG chạy lại được -> mọi retry đều FAIL -> không dùng
+                 cho pipeline hằng ngày.
+* `ignore`     — Đích tồn tại thì lặng lẽ KHÔNG LÀM GÌ. Nguy hiểm ngầm: bạn sửa
+                 bug trong code, chạy lại, và... dữ liệu cũ SAI vẫn nằm nguyên đó.
+                 Không lỗi, không đổi, không ai biết. "Idempotent" nhưng theo nghĩa
+                 sai: nó bảo toàn cả cái sai.
+
+CÂU CHỐT: chỉ `overwrite` cho idempotency THẬT. Và để `overwrite` không giết
+cả bảng partition thì phải bật `spark.sql.sources.partitionOverwriteMode=dynamic`
+-> đó chính xác là bài A26, chạy tiếp đi.
+

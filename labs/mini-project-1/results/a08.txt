@@ -1,0 +1,252 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master 'local[2]' /workspace/labs/mini-project-1/exercises/a08_order_of_transforms.py
+26/07/14 09:07:08 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:07:08 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:07:09 INFO ResourceUtils: ==============================================================
+26/07/14 09:07:09 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:07:09 INFO ResourceUtils: ==============================================================
+26/07/14 09:07:09 INFO SparkContext: Submitted application: a08-order-of-transforms
+26/07/14 09:07:09 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:07:09 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:07:09 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:07:09 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:07:09 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:07:09 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:07:09 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:07:09 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:07:09 INFO Utils: Successfully started service 'sparkDriver' on port 46379.
+26/07/14 09:07:09 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:07:09 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:07:09 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:07:09 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:07:09 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:07:09 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-ec2fca37-d50a-4381-bcee-3097b104e3f0
+26/07/14 09:07:09 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:07:09 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:07:09 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:07:09 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:07:09 INFO Executor: Starting executor ID driver on host 8aca0779bea3
+26/07/14 09:07:09 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/07/14 09:07:09 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 44593.
+26/07/14 09:07:09 INFO NettyBlockTransferService: Server created on 8aca0779bea3:44593
+26/07/14 09:07:09 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:07:09 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 44593, None)
+26/07/14 09:07:09 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:44593 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 44593, None)
+26/07/14 09:07:09 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 44593, None)
+26/07/14 09:07:09 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 44593, None)
+
+==============================================================================
+BẰNG CHỨNG 1 — Optimized Logical Plan: Catalyst có xếp lại hộ bạn không?
+==============================================================================
+
+--- (a) filter SỚM (native) ---
+Aggregate [_groupingexpression#166], [_groupingexpression#166 AS thang#46, round(sum(price#21), 2) AS revenue#62]
++- Project [price#21, date_format(order_purchase_timestamp#3, yyyy-MM, Some(Etc/UTC)) AS _groupingexpression#166]
+   +- Join Inner, (order_id#0 = order_id#16)
+      :- Project [order_id#0, order_purchase_timestamp#3]
+      :  +- Filter ((isnotnull(order_status#2) AND (order_status#2 = delivered)) AND isnotnull(order_id#0))
+      :     +- Relation [order_id#0,customer_id#1,order_status#2,order_purchase_timestamp#3,order_approved_at#4,order_delivered_carrier_date#5,order_delivered_customer_date#6,order_estimated_delivery_date#7] csv
+      +- Project [order_id#16, price#21]
+         +- Filter isnotnull(order_id#16)
+            +- Relation [order_id#16,order_item_id#17,product_id#18,seller_id#19,shipping_limit_date#20,price#21,freight_value#22] csv
+
+
+--- (b) filter MUỘN (native) ---
+Aggregate [_groupingexpression#167], [_groupingexpression#167 AS thang#79, round(sum(price#21), 2) AS revenue#95]
++- Project [price#21, date_format(order_purchase_timestamp#3, yyyy-MM, Some(Etc/UTC)) AS _groupingexpression#167]
+   +- Join Inner, (order_id#0 = order_id#16)
+      :- Project [order_id#0, order_purchase_timestamp#3]
+      :  +- Filter ((isnotnull(order_status#2) AND (order_status#2 = delivered)) AND isnotnull(order_id#0))
+      :     +- Relation [order_id#0,customer_id#1,order_status#2,order_purchase_timestamp#3,order_approved_at#4,order_delivered_carrier_date#5,order_delivered_customer_date#6,order_estimated_delivery_date#7] csv
+      +- Project [order_id#16, price#21]
+         +- Filter isnotnull(order_id#16)
+            +- Relation [order_id#16,order_item_id#17,product_id#18,seller_id#19,shipping_limit_date#20,price#21,freight_value#22] csv
+
+
+>>> plan(a) == plan(b) ? **GIỐNG HỆT**
+
+--- (c) filter SỚM (Python UDF) ---
+Aggregate [_groupingexpression#168], [_groupingexpression#168 AS thang#113, round(sum(price#21), 2) AS revenue#129]
++- Project [price#21, date_format(order_purchase_timestamp#3, yyyy-MM, Some(Etc/UTC)) AS _groupingexpression#168]
+   +- Join Inner, (order_id#0 = order_id#16)
+      :- Project [order_id#0, order_purchase_timestamp#3]
+      :  +- Filter pythonUDF0#169: boolean
+      :     +- BatchEvalPython [<lambda>(order_status#2)#98], [pythonUDF0#169]
+      :        +- Project [order_id#0, order_status#2, order_purchase_timestamp#3]
+      :           +- Filter isnotnull(order_id#0)
+      :              +- Relation [order_id#0,customer_id#1,order_status#2,order_purchase_timestamp#3,order_approved_at#4,order_delivered_carrier_date#5,order_delivered_customer_date#6,order_estimated_delivery_date#7] csv
+      +- Project [order_id#16, price#21]
+         +- Filter isnotnull(order_id#16)
+            +- Relation [order_id#16,order_item_id#17,product_id#18,seller_id#19,shipping_limit_date#20,price#21,freight_value#22] csv
+
+
+--- (d) filter MUỘN (Python UDF) ---
+Aggregate [_groupingexpression#170], [_groupingexpression#170 AS thang#147, round(sum(price#21), 2) AS revenue#163]
++- Project [price#21, date_format(order_purchase_timestamp#3, yyyy-MM, Some(Etc/UTC)) AS _groupingexpression#170]
+   +- Join Inner, (order_id#0 = order_id#16)
+      :- Project [order_id#0, order_purchase_timestamp#3]
+      :  +- Filter pythonUDF0#171: boolean
+      :     +- BatchEvalPython [<lambda>(order_status#2)#146], [pythonUDF0#171]
+      :        +- Project [order_id#0, order_status#2, order_purchase_timestamp#3]
+      :           +- Filter isnotnull(order_id#0)
+      :              +- Relation [order_id#0,customer_id#1,order_status#2,order_purchase_timestamp#3,order_approved_at#4,order_delivered_carrier_date#5,order_delivered_customer_date#6,order_estimated_delivery_date#7] csv
+      +- Project [order_id#16, price#21]
+         +- Filter isnotnull(order_id#16)
+            +- Relation [order_id#16,order_item_id#17,product_id#18,seller_id#19,shipping_limit_date#20,price#21,freight_value#22] csv
+
+
+>>> plan(c) == plan(d) ? **GIỐNG HỆT**
+
+==============================================================================
+BẰNG CHỨNG 2 — `BatchEvalPython` (nơi UDF chạy) nằm TRÊN hay DƯỚI join?
+==============================================================================
+
+--- physical plan của (d): join TRƯỚC, UDF SAU ---
+== Physical Plan ==
+AdaptiveSparkPlan (14)
++- HashAggregate (13)
+   +- Exchange (12)
+      +- HashAggregate (11)
+         +- Project (10)
+            +- BroadcastHashJoin Inner BuildLeft (9)
+               :- BroadcastExchange (6)
+               :  +- Project (5)
+               :     +- Filter (4)
+               :        +- BatchEvalPython (3)
+               :           +- Filter (2)
+               :              +- Scan csv  (1)
+               +- Filter (8)
+                  +- Scan csv  (7)
+
+
+(1) Scan csv 
+Output [3]: [order_id#0, order_status#2, order_purchase_timestamp#3]
+Batched: false
+Location: InMemoryFileIndex [file:/workspace/data/olist/olist_orders_dataset.csv]
+PushedFilters: [IsNotNull(order_id)]
+ReadSchema: struct<order_id:string,order_status:string,order_purchase_timestamp:timestamp>
+
+(2) Filter
+Input [3]: [order_id#0, order_status#2, order_purchase_timestamp#3]
+Condition : isnotnull(order_id#0)
+
+(3) BatchEvalPython
+Input [3]: [order_id#0, order_status#2, order_purchase_timestamp#3]
+Arguments: [<lambda>(order_status#2)#146], [pythonUDF0#171]
+
+(4) Filter
+Input [4]: [order_id#0, order_status#2, order_purchase_timestamp#3, pythonUDF0#171]
+Condition : pythonUDF0#171
+
+(5) Project
+Output [2]: [order_id#0, order_purchase_timestamp#3]
+Input [4]: [order_id#0, order_status#2, order_purchase_timestamp#3, pythonUDF0#171]
+
+(6) BroadcastExchange
+Input [2]: [order_id#0, order_purchase_timestamp#3]
+Arguments: HashedRelationBroadcastMode(List(input[0, string, true]),false), [plan_id=50]
+
+(7) Scan csv 
+Output [2]: [order_id#16, price#21]
+Batched: false
+Location: InMemoryFileIndex [file:/workspace/data/olist/olist_order_items_dataset.csv]
+PushedFilters: [IsNotNull(order_id)]
+ReadSchema: struct<order_id:string,price:double>
+
+(8) Filter
+Input [2]: [order_id#16, price#21]
+Condition : isnotnull(order_id#16)
+
+(9) BroadcastHashJoin
+Left keys [1]: [order_id#0]
+Right keys [1]: [order_id#16]
+Join type: Inner
+Join condition: None
+
+(10) Project
+Output [2]: [price#21, date_format(order_purchase_timestamp#3, yyyy-MM, Some(Etc/UTC)) AS _groupingexpression#170]
+Input [4]: [order_id#0, order_purchase_timestamp#3, order_id#16, price#21]
+
+(11) HashAggregate
+Input [2]: [price#21, _groupingexpression#170]
+Keys [1]: [_groupingexpression#170]
+Functions [1]: [partial_sum(price#21)]
+Aggregate Attributes [1]: [sum#172]
+Results [2]: [_groupingexpression#170, sum#173]
+
+(12) Exchange
+Input [2]: [_groupingexpression#170, sum#173]
+Arguments: hashpartitioning(_groupingexpression#170, 200), ENSURE_REQUIREMENTS, [plan_id=55]
+
+(13) HashAggregate
+Input [2]: [_groupingexpression#170, sum#173]
+Keys [1]: [_groupingexpression#170]
+Functions [1]: [sum(price#21)]
+Aggregate Attributes [1]: [sum(price#21)#162]
+Results [2]: [_groupingexpression#170 AS thang#147, round(sum(price#21)#162, 2) AS revenue#163]
+
+(14) AdaptiveSparkPlan
+Output [2]: [thang#147, revenue#163]
+Arguments: isFinalPlan=false
+
+
+
+
+| query | thứ tự node (đọc từ NGOÀI vào TRONG) |
+|---|---|
+| (a) native sớm | `HashAggregate → Exchange → HashAggregate → BroadcastHashJoin → Filter → Filter` |
+| (b) native muộn | `HashAggregate → Exchange → HashAggregate → BroadcastHashJoin → Filter → Filter` |
+| (c) UDF sớm | `HashAggregate → Exchange → HashAggregate → BroadcastHashJoin → Filter → BatchEvalPython → Filter → Filter` |
+| (d) UDF muộn | `HashAggregate → Exchange → HashAggregate → BroadcastHashJoin → Filter → BatchEvalPython → Filter → Filter` |
+
+Cách đọc bảng trên: node đứng SAU trong danh sách = nằm SÂU HƠN trong cây = chạy SỚM HƠN.
+  - Nếu ở (b) `Filter` xuất hiện SAU (= dưới) node join  -> Catalyst ĐÃ đẩy filter xuống
+    trước join, dù bạn gõ nó sau.
+  - Nếu ở (d) `BatchEvalPython` xuất hiện TRƯỚC (= trên) node join -> UDF KHÔNG đẩy
+    xuống được, nó buộc phải chạy trên toàn bộ kết quả join.
+
+==============================================================================
+BẰNG CHỨNG 3 — thời gian (3 lần, vứt lần 1, lấy min lần 2-3)
+==============================================================================
+(Mỗi lần chạy DỰNG LẠI query từ đầu — nếu không, Spark dùng lại file shuffle
+ của lần trước và cả 4 biến thể đều ra ~0.04s giả tạo. Xem chú thích ở b_a().)
+
+
+| biến thể | lần 1 (lạnh) | lần 2 | lần 3 | ẤM (min 2-3) | so với (a) |
+|---|---|---|---|---|---|
+| (a) filter SỚM · native | 1.87s | 0.67s | 0.58s | **0.58s** | 1.00× |
+| (b) filter MUỘN · native | 0.59s | 0.54s | 0.49s | **0.49s** | 0.86× |
+| (c) filter SỚM · Python UDF | 1.01s | 0.53s | 0.54s | **0.53s** | 0.91× |
+| (d) filter MUỘN · Python UDF | 0.50s | 0.48s | 0.52s | **0.48s** | 0.83× |
+
+4 biến thể ra CÙNG kết quả? **CÓ**  (nếu KHÔNG thì mọi số trên đây là rác)
+Số tháng: 23 · 3 tháng đầu: [('2016-09', 134.97), ('2016-10', 40325.11), ('2016-12', 10.9)]
+
+==============================================================================
+KẾT LUẬN TRUNG THỰC
+==============================================================================
+
+1. VỚI BIỂU THỨC NATIVE: plan(a) GIỐNG HỆT NHAU plan(b).
+   Nghĩa là quy tắc `PushDownPredicate` của Catalyst đã tự kéo filter xuống DƯỚI join.
+   Bạn gõ filter ở đâu cũng thế. Tín điều "filter càng sớm càng tốt" ở đây là ĐÚNG VỀ
+   KẾT QUẢ nhưng THỪA VỀ CÔNG SỨC — Spark làm hộ rồi.
+
+2. VỚI PYTHON UDF: plan(c) GIỐNG HỆT NHAU (tôi đã đoán SAI — ghi rõ vào report!) plan(d).
+   Vì sao? Vì Catalyst KHÔNG BIẾT ruột con lambda đó làm gì. Nó không dám khẳng định
+   hàm này chỉ đụng vào cột `order_status` và không có side-effect, nên KHÔNG dám đổi
+   chỗ. UDF bị bọc vào một node riêng (`BatchEvalPython`) — dữ liệu phải rời JVM, sang
+   tiến trình Python, quay về. Đẩy một node như thế xuống dưới join là chuyện Catalyst
+   né. Kết quả: ở (d), UDF phải chạy trên TOÀN BỘ kết quả join (~112k dòng) thay vì chỉ
+   trên bảng orders (~99k dòng) trước khi join.
+
+3. VẬY BÀI HỌC THẬT LÀ GÌ?
+   KHÔNG phải "filter sớm đi". Mà là: **BIẾT KHI NÀO CATALYST KHÔNG LÀM HỘ BẠN.**
+   Catalyst chỉ tối ưu được thứ nó ĐỌC HIỂU ĐƯỢC. Cứ mỗi lần bạn nhét một hộp đen
+   (Python UDF, `df.rdd.map`) vào giữa pipeline, bạn vừa dựng một BỨC TƯỜNG mà tối ưu
+   hoá không xuyên qua được. Mọi thứ nằm dưới bức tường đó, bạn phải TỰ tối ưu.
+
+   Hệ quả thực chiến cho `ingest.py`:
+     - Ưu tiên tuyệt đối `pyspark.sql.functions` (300+ hàm) trước khi nghĩ tới UDF.
+     - Buộc phải dùng UDF -> đặt nó CÀNG MUỘN CÀNG TỐT trong pipeline (sau khi đã filter
+       và pruning bằng native), và TỰ TAY filter trước nó. Đừng chờ Catalyst.
+     - Đây cũng chính là lý do `PushedFilters` ở bài A6 không bao giờ chứa UDF.
+

@@ -1,0 +1,175 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master spark://spark-master:7077 /workspace/labs/mini-project-1/exercises/a12_skipped_stage.py
+26/07/14 09:13:26 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:13:26 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:13:26 INFO ResourceUtils: ==============================================================
+26/07/14 09:13:26 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:13:26 INFO ResourceUtils: ==============================================================
+26/07/14 09:13:26 INFO SparkContext: Submitted application: a12-skipped-stage
+26/07/14 09:13:26 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:13:26 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:13:26 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:13:26 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:13:26 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:13:26 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:13:26 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:13:26 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:13:26 INFO Utils: Successfully started service 'sparkDriver' on port 36289.
+26/07/14 09:13:26 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:13:26 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:13:26 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:13:26 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:13:26 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:13:26 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-e8f0ab6d-2ba9-4dd0-bae3-a52b574b2e83
+26/07/14 09:13:26 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:13:26 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:13:26 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:13:26 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:13:26 INFO StandaloneAppClient$ClientEndpoint: Connecting to master spark://spark-master:7077...
+26/07/14 09:13:26 INFO TransportClientFactory: Successfully created connection to spark-master/172.22.0.2:7077 after 18 ms (0 ms spent in bootstraps)
+26/07/14 09:13:27 INFO StandaloneSchedulerBackend: Connected to Spark cluster with app ID app-20260714091326-0018
+26/07/14 09:13:27 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20260714091326-0018/0 on worker-20260714065715-172.22.0.3-38305 (172.22.0.3:38305) with 3 core(s)
+26/07/14 09:13:27 INFO StandaloneSchedulerBackend: Granted executor ID app-20260714091326-0018/0 on hostPort 172.22.0.3:38305 with 3 core(s), 1024.0 MiB RAM
+26/07/14 09:13:27 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20260714091326-0018/1 on worker-20260714065715-172.22.0.4-40037 (172.22.0.4:40037) with 3 core(s)
+26/07/14 09:13:27 INFO StandaloneSchedulerBackend: Granted executor ID app-20260714091326-0018/1 on hostPort 172.22.0.4:40037 with 3 core(s), 1024.0 MiB RAM
+26/07/14 09:13:27 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 35179.
+26/07/14 09:13:27 INFO NettyBlockTransferService: Server created on 8aca0779bea3:35179
+26/07/14 09:13:27 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:13:27 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 35179, None)
+26/07/14 09:13:27 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:35179 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 35179, None)
+26/07/14 09:13:27 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 35179, None)
+26/07/14 09:13:27 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 35179, None)
+26/07/14 09:13:27 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20260714091326-0018/0 is now RUNNING
+26/07/14 09:13:27 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20260714091326-0018/1 is now RUNNING
+26/07/14 09:13:27 INFO StandaloneSchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
+
+====================================================================================================
+A12 — SĂN SKIPPED STAGE (AQE=off, broadcast=off)
+====================================================================================================
+master=spark://spark-master:7077 | Spark UI: http://8aca0779bea3:4040 (tab Jobs -> job J2 sẽ có stage xám)
++------------+------+
+|order_status| count|
++------------+------+
+|     shipped|  1185|
+|    canceled|   542|
+|    approved|     3|
+|    invoiced|   359|
+|   delivered|110197|
+| unavailable|     7|
+|  processing|   357|
++------------+------+
+
+
+----------------------------------------------------------------------------------------------------
+>>> J1 — 1 job | 4 stage chạy | 0 stage SKIPPED | 3 shuffle
+----------------------------------------------------------------------------------------------------
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 1 | COMPLETE | count at <unknown>:0 | 5 | 99,441 | 3,600,523 B / 99,441 rec | 0 B / 0 rec |
+  | 2 | COMPLETE | count at <unknown>:0 | 4 | 112,650 | 3,522,576 B / 112,650 rec | 0 B / 0 rec |
+  | 3 | COMPLETE | count at <unknown>:0 | 200 | 0 | 11,799 B / 200 rec | 7,123,099 B / 212,091 rec |
+  | 4 | COMPLETE | count at <unknown>:0 | 1 | 0 | 0 B / 0 rec | 11,799 B / 200 rec |
+
+----------------------------------------------------------------------------------------------------
+>>> J2 — 5 job | 8 stage chạy | 12 stage SKIPPED | 3 shuffle
+----------------------------------------------------------------------------------------------------
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 5 | COMPLETE | showString at <unknown>:0 | 4 | 112,650 | 3,522,576 B / 112,650 rec | 0 B / 0 rec |
+  | 6 | COMPLETE | showString at <unknown>:0 | 5 | 99,441 | 3,650,660 B / 99,441 rec | 0 B / 0 rec |
+  | 7 | COMPLETE | showString at <unknown>:0 | 200 | 0 | 66,685 B / 891 rec | 7,173,236 B / 212,091 rec |
+  | 8 | COMPLETE | showString at <unknown>:0 | 1 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 9 | SKIPPED | showString at <unknown>:0 | 4 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 10 | SKIPPED | showString at <unknown>:0 | 5 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 11 | SKIPPED | showString at <unknown>:0 | 200 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 12 | COMPLETE | showString at <unknown>:0 | 4 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 13 | SKIPPED | showString at <unknown>:0 | 4 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 14 | SKIPPED | showString at <unknown>:0 | 5 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 15 | SKIPPED | showString at <unknown>:0 | 200 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 16 | COMPLETE | showString at <unknown>:0 | 20 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 17 | SKIPPED | showString at <unknown>:0 | 4 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 18 | SKIPPED | showString at <unknown>:0 | 5 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 19 | SKIPPED | showString at <unknown>:0 | 200 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 20 | COMPLETE | showString at <unknown>:0 | 100 | 0 | 0 B / 0 rec | 37,607 B / 530 rec |
+  | 21 | SKIPPED | showString at <unknown>:0 | 4 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 22 | SKIPPED | showString at <unknown>:0 | 5 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 23 | SKIPPED | showString at <unknown>:0 | 200 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 24 | COMPLETE | showString at <unknown>:0 | 75 | 0 | 0 B / 0 rec | 29,078 B / 361 rec |
+
+----------------------------------------------------------------------------------------------------
+>>> J3 — 1 job | 4 stage chạy | 0 stage SKIPPED | 3 shuffle
+----------------------------------------------------------------------------------------------------
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 25 | COMPLETE | count at <unknown>:0 | 4 | 112,650 | 3,522,576 B / 112,650 rec | 0 B / 0 rec |
+  | 26 | COMPLETE | count at <unknown>:0 | 5 | 99,441 | 3,600,523 B / 99,441 rec | 0 B / 0 rec |
+  | 27 | COMPLETE | count at <unknown>:0 | 200 | 0 | 11,799 B / 200 rec | 7,123,099 B / 212,091 rec |
+  | 28 | COMPLETE | count at <unknown>:0 | 1 | 0 | 0 B / 0 rec | 11,799 B / 200 rec |
+
+====================================================================================================
+BẢNG DÁN VÀO REPORT (A12)
+====================================================================================================
+
+| job | code | stage trong job | stage CHẠY | stage **SKIPPED** | task đã chạy | thời gian |
+|---|---|---|---|---|---|---|
+| J1 | `joined.count()` | 4 | 4 | **0** | 210 | 3404 ms |
+| J2 | `joined.groupBy(status).count().show()` — CÙNG object `joined` | 20 | 8 | **12** | 1245 | 2992 ms |
+| J3 | `orders2.join(items2).count()` — df dựng LẠI từ đầu | 4 | 4 | **0** | 210 | 1033 ms |
+
+--- CHI TIẾT STAGE BỊ SKIP Ở J2 ---
+  stage 9 (showString at <unknown>:0): 4 task — KHÔNG chạy lại task nào, đọc thẳng shuffle file cũ.
+  stage 10 (showString at <unknown>:0): 5 task — KHÔNG chạy lại task nào, đọc thẳng shuffle file cũ.
+  stage 11 (showString at <unknown>:0): 200 task — KHÔNG chạy lại task nào, đọc thẳng shuffle file cũ.
+  stage 13 (showString at <unknown>:0): 4 task — KHÔNG chạy lại task nào, đọc thẳng shuffle file cũ.
+  stage 14 (showString at <unknown>:0): 5 task — KHÔNG chạy lại task nào, đọc thẳng shuffle file cũ.
+  stage 15 (showString at <unknown>:0): 200 task — KHÔNG chạy lại task nào, đọc thẳng shuffle file cũ.
+  stage 17 (showString at <unknown>:0): 4 task — KHÔNG chạy lại task nào, đọc thẳng shuffle file cũ.
+  stage 18 (showString at <unknown>:0): 5 task — KHÔNG chạy lại task nào, đọc thẳng shuffle file cũ.
+  stage 19 (showString at <unknown>:0): 200 task — KHÔNG chạy lại task nào, đọc thẳng shuffle file cũ.
+  stage 21 (showString at <unknown>:0): 4 task — KHÔNG chạy lại task nào, đọc thẳng shuffle file cũ.
+  stage 22 (showString at <unknown>:0): 5 task — KHÔNG chạy lại task nào, đọc thẳng shuffle file cũ.
+  stage 23 (showString at <unknown>:0): 200 task — KHÔNG chạy lại task nào, đọc thẳng shuffle file cũ.
+
+--- SHUFFLE FILE NẰM Ở ĐÂU? (chạy code TRÊN executor để hỏi) ---
+| host (container) | thư mục blockmgr thật | số thư mục | file .data | file .index |
+|---|---|---|---|---|
+| 169b8cabad17 | `/tmp/spark-794f8993-24e7-4ac7-a3b1-32ee57d95495/executor-75779bb2-0175-4997-adae-ff1ca6d04af1/blockmgr-09fd8aac-6de7-4ac9-95a6-01733e7fddca` | 1 | 103 | 103 |
+| aac4de53a011 | `/tmp/spark-abc4680c-0056-487c-b5fd-699797eb6e1a/executor-6f068541-8d60-4098-831b-bf9fff3b0b48/blockmgr-1d8f6793-b2fb-4f33-ad00-f825a586b998` | 1 | 106 | 106 |
+
+Đường dẫn ở cột 2 là do EXECUTOR tự khai (đọc biến môi trường SPARK_LOCAL_DIRS),
+không phải tôi đoán. Kiểm chứng bằng tay ở terminal khác, TRONG LÚC APP CÒN SỐNG
+(app chết là Worker dọn sạch, chạy sau sẽ không thấy gì — tôi đã dính bẫy này):
+    docker exec spark-mastery-spark-worker-1 sh -c 'find /opt/spark/work -name "*.data" | head'
+
+=== GIẢI THÍCH (phần phải viết vào report) ===
+
+1. Spark tái dùng CÁI GÌ?
+   Output của ShuffleMapStage: các file .data (dữ liệu đã băm sẵn theo partition
+   đích) + .index (bản đồ offset). Stage sau không nhận dữ liệu được "đẩy" tới —
+   nó tự KÉO (fetch) đúng mảnh của mình từ mọi executor. Vì file còn nguyên trên
+   đĩa nên job sau chỉ việc kéo lại, khỏi tính lại từ CSV.
+
+2. Nó nằm ở đâu?
+   LOCAL DISK của executor (spark.local.dir, mặc định /tmp/blockmgr-*), tức ổ đĩa
+   của container worker — KHÔNG phải HDFS/S3, KHÔNG phải RAM, KHÔNG phải driver.
+   Xem bảng host ở trên: đó là hostname của worker container, không phải máy bạn.
+
+3. Vì sao executor chết là mất luôn "skipped"?
+   File shuffle nằm trên đĩa RIÊNG của executor đó. Executor chết (OOM, bị thu
+   hồi, container restart) -> file đi theo. Job sau fetch không thấy file ->
+   FetchFailedException -> DAG Scheduler phải CHẠY LẠI cả ShuffleMapStage đã mất
+   (trên UI hiện "Resubmitted"). Đó là lý do:
+       skipped stage là MÓN QUÀ CƠ HỘI, KHÔNG PHẢI HỢP ĐỒNG.
+   Cần chắc chắn thì .cache()/.persist() (có replication, có Storage tab để nhìn),
+   đừng thiết kế pipeline dựa vào việc shuffle file sẽ còn đó.
+   (External Shuffle Service giữ file sống sót qua cái chết của executor — nhưng
+   đó là chuyện của module 3, cluster này không bật.)
+
+4. Vì sao J3 khác J2? (đối chứng — chỗ 9/10 người hiểu sai)
+   J3 dựng DataFrame MỚI với logic Y HỆT, dữ liệu Y HỆT — mà vẫn phải chạy lại
+   từ đầu. Vì reuse gắn với ĐỐI TƯỢNG ShuffleDependency trong DAG, không phải với
+   "nội dung giống nhau". Muốn dùng lại kết quả thì phải dùng lại chính cái
+   DataFrame đó (hoặc cache/ghi ra đĩa). Viết lại query từ đầu = tính lại từ đầu.
+
+Số dòng để đối chiếu: J1 count = 112,650 | J3 count = 112,650 (phải bằng nhau)
+====================================================================================================
+

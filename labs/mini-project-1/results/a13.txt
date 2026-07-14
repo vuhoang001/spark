@@ -1,0 +1,101 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master spark://spark-master:7077 /workspace/labs/mini-project-1/exercises/a13_job_description.py
+26/07/14 09:14:26 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:14:26 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:14:26 INFO ResourceUtils: ==============================================================
+26/07/14 09:14:26 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:14:26 INFO ResourceUtils: ==============================================================
+26/07/14 09:14:26 INFO SparkContext: Submitted application: a13-job-description
+26/07/14 09:14:26 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:14:26 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:14:26 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:14:26 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:14:26 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:14:26 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:14:26 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:14:26 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:14:26 INFO Utils: Successfully started service 'sparkDriver' on port 38223.
+26/07/14 09:14:26 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:14:26 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:14:26 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:14:26 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:14:26 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:14:26 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-61bc5406-4fef-4fb7-ab7a-04f2d42f8619
+26/07/14 09:14:26 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:14:26 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:14:26 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:14:26 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:14:26 INFO StandaloneAppClient$ClientEndpoint: Connecting to master spark://spark-master:7077...
+26/07/14 09:14:26 INFO TransportClientFactory: Successfully created connection to spark-master/172.22.0.2:7077 after 17 ms (0 ms spent in bootstraps)
+26/07/14 09:14:27 INFO StandaloneSchedulerBackend: Connected to Spark cluster with app ID app-20260714091427-0019
+26/07/14 09:14:27 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20260714091427-0019/0 on worker-20260714065715-172.22.0.3-38305 (172.22.0.3:38305) with 3 core(s)
+26/07/14 09:14:27 INFO StandaloneSchedulerBackend: Granted executor ID app-20260714091427-0019/0 on hostPort 172.22.0.3:38305 with 3 core(s), 1024.0 MiB RAM
+26/07/14 09:14:27 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20260714091427-0019/1 on worker-20260714065715-172.22.0.4-40037 (172.22.0.4:40037) with 3 core(s)
+26/07/14 09:14:27 INFO StandaloneSchedulerBackend: Granted executor ID app-20260714091427-0019/1 on hostPort 172.22.0.4:40037 with 3 core(s), 1024.0 MiB RAM
+26/07/14 09:14:27 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 42439.
+26/07/14 09:14:27 INFO NettyBlockTransferService: Server created on 8aca0779bea3:42439
+26/07/14 09:14:27 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:14:27 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 42439, None)
+26/07/14 09:14:27 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:42439 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 42439, None)
+26/07/14 09:14:27 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 42439, None)
+26/07/14 09:14:27 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 42439, None)
+26/07/14 09:14:27 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20260714091427-0019/1 is now RUNNING
+26/07/14 09:14:27 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20260714091427-0019/0 is now RUNNING
+26/07/14 09:14:27 INFO StandaloneSchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
+
+====================================================================================================
+A13 — ĐẶT TÊN CHO JOB
+====================================================================================================
+Spark UI: http://8aca0779bea3:4040  -> tab Jobs (chụp ảnh cột Description)
+
+====================================================================================================
+TAB JOBS — chính là thứ Spark UI đang vẽ (dán vào report)
+====================================================================================================
+
+| jobId | Description (setJobDescription) | tên mặc định (call site) | stage | task |
+|---|---|---|---|---|
+| 0 | *(trống — không đặt tên)* | `count at /workspace/labs/mini-project-1/exercises/uiprobe.py:66` | 1 | 2 |
+| 1 | *(trống — không đặt tên)* | `count at <unknown>:0` | 1 | 6 |
+| 2 | *(trống — không đặt tên)* | `count at <unknown>:0` | 2 | 7 |
+| 3 | CP1 · đọc orders (PERMISSIVE) + đếm dòng hỏng | `count at <unknown>:0` | 1 | 5 |
+| 4 | CP1 · đọc orders (PERMISSIVE) + đếm dòng hỏng | `count at <unknown>:0` | 2 | 6 |
+| 5 | CP1 · đọc orders (PERMISSIVE) + đếm dòng hỏng | `count at <unknown>:0` | 1 | 5 |
+| 6 | CP1 · đọc orders (PERMISSIVE) + đếm dòng hỏng | `count at <unknown>:0` | 2 | 6 |
+| 7 | CP1 · ghi quarantine (0 dòng hỏng) | `parquet at <unknown>:0` | 1 | 5 |
+| 8 | CP2 · derive order_date + repartition(order_date) | `count at <unknown>:0` | 1 | 5 |
+| 9 | CP2 · derive order_date + repartition(order_date) | `count at <unknown>:0` | 2 | 6 |
+| 10 | CP2 · ghi orders_clean partitionBy(order_date) | `parquet at <unknown>:0` | 1 | 5 |
+| 11 | CP2 · ghi orders_clean partitionBy(order_date) | `parquet at <unknown>:0` | 2 | 11 |
+| 12 | Listing leaf files and directories for 634 paths:<br/>file:/workspace/data/output/tmp/a13/orders_clean/order_date=2018-06-19, ... | `parquet at <unknown>:0` | 1 | 634 |
+| 13 | CP2 · ghi orders_clean partitionBy(order_date) | `parquet at <unknown>:0` | 1 | 1 |
+| 14 | CP2 · ghi orders_clean partitionBy(order_date) | `count at <unknown>:0` | 1 | 20 |
+| 15 | CP2 · ghi orders_clean partitionBy(order_date) | `count at <unknown>:0` | 2 | 21 |
+| 16 | Listing leaf files and directories for 634 paths:<br/>file:/workspace/data/output/tmp/a13/orders_clean/order_date=2018-06-19, ... | `parquet at <unknown>:0` | 1 | 634 |
+| 17 | *(trống — không đặt tên)* | `parquet at <unknown>:0` | 1 | 1 |
+| 18 | *(trống — không đặt tên)* | `count at <unknown>:0` | 1 | 20 |
+| 19 | *(trống — không đặt tên)* | `count at <unknown>:0` | 2 | 21 |
+
+--- ĐỌC BẢNG TRÊN ---
+Cột "tên mặc định" là thứ bạn ĐƯỢC TẶNG nếu không làm gì:
+`count at NativeMethodAccessorImpl.java:0` — mọi job PySpark đều tên na ná vậy,
+vì mọi lệnh đều đi qua cùng một cầu Py4J. Vô dụng khi debug.
+
+Cột "Description" là thứ bạn TỰ VIẾT. Giờ tab Jobs đọc như mục lục pipeline.
+
+--- BẪY (BƯỚC 5, nhìn kỹ bảng) ---
+Job "đọc lại để verify" KHÔNG hề được đặt tên, nhưng nó vẫn đội cái nhãn
+"CP2 · ghi orders_clean partitionBy(order_date)" của bước 4. Vì sao? Vì job
+description là TRẠNG THÁI DÍNH của thread driver — set một lần, mọi job sau đó
+mang nó cho đến khi bị ghi đè.
+=> Mô tả SAI nguy hiểm hơn không có mô tả: 3h sáng bạn sẽ đi tối ưu nhầm job.
+=> Kỷ luật: set lại TRƯỚC MỖI action, hoặc setJobDescription(None) khi xong
+   (bước 6 — nhìn bảng, job cuối đã trở về tên call-site mặc định).
+
+--- SỐ LIỆU PIPELINE (tiện thể, đối chiếu với Checkpoint 1) ---
+dòng đọc được       : 99,441
+dòng hỏng (_corrupt): 0
+dòng order_date NULL: 0
+dòng ghi vào bảng   : 99,441
+kiểm tra: 99,441 - 0 - 0 = 99,441  ->  KHỚP
+
+====================================================================================================
+

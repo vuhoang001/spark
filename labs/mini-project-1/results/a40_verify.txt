@@ -1,0 +1,15 @@
+=== XÁC MINH ĐỘC LẬP data/big/orders_100x ===
+--- du -sh ---
+1.7G	data/big/orders_100x/
+--- wc -l (gồm 20 header) ---
+9944120
+--- số file ---
+20
+--- cửa sổ ngày (order_purchase_timestamp) ---
+min = 2016-09-04
+max = 2018-10-17
+số ngày phân biệt = 774
+--- order_id duy nhất? (sort -u, exact, disk-backed) ---
+9944100
+--- thứ tự nhân quả: đếm dòng có approved < purchase (phải = 0) ---
+0

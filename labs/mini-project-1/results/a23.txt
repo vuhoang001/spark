@@ -1,0 +1,115 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master 'local[2]' /workspace/labs/mini-project-1/exercises/a23_inject_dirty.py
+[gen] nguồn    : /workspace/data/olist/olist_orders_dataset.csv
+[gen] đã ghi   : /workspace/data/dirty/orders_dirty.csv
+[gen]   tổng   : 2009 dòng = 1 header + 2000 data sạch + 8 dòng bẩn
+[gen]   (generator = src/make_dirty.py — xem results/a23_injected.md)
+
+| # | Loại bẩn | Dòng số (1-based, kể cả header) | Token thô | Token parser | Nguyên văn (60 ký tự đầu) |
+|---|---|---|---|---|---|
+| 1 | `L1_thieu_cot` — Thiếu cột: xoá 2 field cuối (chỉ còn 6/8) | 224 | 6 | 6 | `dirty01missingcols,cust01,delivered,2018-07-02 10:00:00,2018` |
+| 2 | `L2_thua_cot` — Thừa cột: nhét 1 field lạ vào GIỮA (thành 9/8) | 447 | 9 | 9 | `dirty02extracols,cust02,delivered,FIELD_LA_TU_DAU_RA,2018-07` |
+| 3 | `L3_sai_kieu` — Sai kiểu: order_purchase_timestamp = 'hom qua' (vẫn ĐÚNG 8 field) | 670 | 8 | 8 | `dirty03badtype,cust03,delivered,hom qua,2018-07-02 11:00:00,` |
+| 4 | `L4a_phay_trong_text_thua_token` — Dấu phẩy trong text không có ngoặc kép, không bù trừ -> 9 token | 893 | 9 | 9 | `dirty04acomma,cust04a,Sao Paulo, SP,2018-07-02 10:00:00,2018` |
+| 5 | `L4b_phay_trong_text_lech_cot` — Dấu phẩy trong text + thiếu 1 field cuối -> ĐỦ 8 token nhưng LỆCH CỘT | 1116 | 8 | 8 | `dirty04bcomma,cust04b,Sao Paulo, SP,2018-07-02 10:00:00,2018` |
+| 6 | `L5_ngoac_kep_lech` — Ngoặc kép mở " mà không đóng | 1339 | ? | 2 | `dirty05badquote,"cust05,delivered,2018-07-02 10:00:00,2018-0` |
+| 7 | `L6a_dong_trong` — Dòng trống hoàn toàn | 1562 | 0 | 0 | `(dòng trống)` |
+| 8 | `L6b_header_lap` — Header lặp lại ở GIỮA file (kinh điển khi `cat` nhiều file lại) | 1785 | 8 | 8 | `"order_id","customer_id","order_status","order_purchase_time` |
+
+Schema đúng có 8 field. Mọi con số khác 8 ở cột 'token thô' là một cái bẫy CẤU TRÚC.
+Nguy hiểm nhất là dòng có ĐÚNG 8 token mà vẫn sai: L4b (lệch cột).
+26/07/14 09:37:36 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:37:36 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:37:36 INFO ResourceUtils: ==============================================================
+26/07/14 09:37:36 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:37:36 INFO ResourceUtils: ==============================================================
+26/07/14 09:37:36 INFO SparkContext: Submitted application: a23-dirty
+26/07/14 09:37:36 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:37:36 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:37:36 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:37:36 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:37:36 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:37:36 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:37:36 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:37:36 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:37:36 INFO Utils: Successfully started service 'sparkDriver' on port 46309.
+26/07/14 09:37:36 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:37:36 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:37:36 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:37:36 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:37:36 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:37:36 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-03f1f714-c3e7-47a4-b9f4-d81c3677b939
+26/07/14 09:37:36 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:37:36 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:37:36 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:37:36 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:37:36 INFO Executor: Starting executor ID driver on host 8aca0779bea3
+26/07/14 09:37:36 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/07/14 09:37:36 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 34153.
+26/07/14 09:37:36 INFO NettyBlockTransferService: Server created on 8aca0779bea3:34153
+26/07/14 09:37:36 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:37:36 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 34153, None)
+26/07/14 09:37:36 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:34153 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 34153, None)
+26/07/14 09:37:36 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 34153, None)
+26/07/14 09:37:36 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 34153, None)
+
+==============================================================================
+LẦN ĐỌC 1 — schema CÓ KIỂU (timestamp thật) + _corrupt_record
+==============================================================================
+
+[typed] tổng dòng đọc được = 2007 | dòng vào _corrupt_record = 7
+
+==============================================================================
+LẦN ĐỌC 2 — schema TOÀN STRING (kiểu 'bronze cho an toàn') + _corrupt_record
+==============================================================================
+
+[bronze] tổng dòng đọc được = 2007 | dòng vào _corrupt_record = 4
+
+==============================================================================
+BẢNG BẰNG CHỨNG — loại bẩn nào Spark BẮT ĐƯỢC, loại nào LỌT?
+==============================================================================
+
+| Loại bẩn | typed: có trong _corrupt_record? | typed: dòng còn sống? | bronze(all-string): có trong _corrupt_record? | bronze: order_status đọc ra là gì |
+|---|---|---|---|---|
+| `dirty01` | CÓ (1) | CÒN (1) | CÓ (1) | 'delivered' |
+| `dirty02` | CÓ (1) | CÒN (1) | CÓ (1) | 'delivered' |
+| `dirty03` | CÓ (1) | CÒN (1) | không | 'delivered' |
+| `dirty04a` | CÓ (1) | CÒN (1) | CÓ (1) | 'Sao Paulo' |
+| `dirty04b` | CÓ (1) | CÒN (1) | không | 'Sao Paulo' |
+| `dirty05` | CÓ (1) | CÒN (1) | CÓ (1) | None |
+| `L6b_header_lap` | CÓ | CÒN (order_id == "order_id": 1 dòng) | — | — |
+
+--- Nguyên văn _corrupt_record (schema typed), tối đa 10 dòng:
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|_corrupt_record                                                                                                                                                                      |
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|dirty01missingcols,cust01,delivered,2018-07-02 10:00:00,2018-07-02 11:00:00,2018-07-03 09:00:00                                                                                      |
+|dirty02extracols,cust02,delivered,FIELD_LA_TU_DAU_RA,2018-07-02 10:00:00,2018-07-02 11:00:00,2018-07-03 09:00:00,2018-07-10 00:00:00,2018-07-12 00:00:00                             |
+|dirty03badtype,cust03,delivered,hom qua,2018-07-02 11:00:00,2018-07-03 09:00:00,2018-07-10 21:00:00,2018-07-12 00:00:00                                                              |
+|dirty04acomma,cust04a,Sao Paulo, SP,2018-07-02 10:00:00,2018-07-02 11:00:00,2018-07-03 09:00:00,2018-07-10 21:00:00,2018-07-12 00:00:00                                              |
+|dirty04bcomma,cust04b,Sao Paulo, SP,2018-07-02 10:00:00,2018-07-02 11:00:00,2018-07-03 09:00:00,2018-07-10 21:00:00                                                                  |
+|dirty05badquote,"cust05,delivered,2018-07-02 10:00:00,2018-07-02 11:00:00,2018-07-03 09:00:00,2018-07-10 21:00:00,2018-07-12 00:00:00                                                |
+|"order_id","customer_id","order_status","order_purchase_timestamp","order_approved_at","order_delivered_carrier_date","order_delivered_customer_date","order_estimated_delivery_date"|
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
+--- L4b (lệch cột) đọc bằng schema BRONZE toàn String — nhìn kỹ:
+-RECORD 0--------------------------------------------
+ order_id                      | dirty04bcomma       
+ customer_id                   | cust04b             
+ order_status                  | Sao Paulo           
+ order_purchase_timestamp      |  SP                 
+ order_approved_at             | 2018-07-02 10:00:00 
+ order_delivered_carrier_date  | 2018-07-02 11:00:00 
+ order_delivered_customer_date | 2018-07-03 09:00:00 
+ order_estimated_delivery_date | 2018-07-10 21:00:00 
+ _corrupt_record               | null                
+
+
+KẾT LUẬN (đọc bảng trên rồi tự đối chiếu, đừng chép nếu số không khớp):
+  * _corrupt_record bắt được lỗi CẤU TRÚC (thiếu/thừa token) và lỗi KIỂU
+    (chuỗi không ép được sang timestamp) — VÌ hai lỗi đó làm PARSER gãy.
+  * Nó KHÔNG bắt được lỗi NGỮ NGHĨA: 'Sao Paulo' nằm trong order_status là
+    một chuỗi hoàn toàn hợp lệ với parser. Chỉ có CON NGƯỜI biết order_status
+    phải thuộc 8 giá trị {delivered, shipped, canceled, ...}.
+  * => Càng nhiều cột String, _corrupt_record càng vô dụng. Schema chặt là
+    tuyến phòng thủ SỐ MỘT; quality gate (A38) là tuyến SỐ HAI. Cần cả hai.

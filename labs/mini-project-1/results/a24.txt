@@ -1,0 +1,112 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master 'local[2]' /workspace/labs/mini-project-1/exercises/a24_corrupt_record_trap.py
+26/07/14 09:43:16 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:43:16 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:43:16 INFO ResourceUtils: ==============================================================
+26/07/14 09:43:16 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:43:16 INFO ResourceUtils: ==============================================================
+26/07/14 09:43:16 INFO SparkContext: Submitted application: a24-corrupt-trap
+26/07/14 09:43:16 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:43:16 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:43:16 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:43:16 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:43:16 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:43:16 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:43:16 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:43:16 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:43:16 INFO Utils: Successfully started service 'sparkDriver' on port 35213.
+26/07/14 09:43:16 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:43:16 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:43:16 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:43:16 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:43:16 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:43:16 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-749ad728-ec7a-47bb-ab6a-317c583387d8
+26/07/14 09:43:16 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:43:16 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:43:16 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:43:16 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:43:17 INFO Executor: Starting executor ID driver on host 8aca0779bea3
+26/07/14 09:43:17 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/07/14 09:43:17 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 41105.
+26/07/14 09:43:17 INFO NettyBlockTransferService: Server created on 8aca0779bea3:41105
+26/07/14 09:43:17 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:43:17 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 41105, None)
+26/07/14 09:43:17 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:41105 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 41105, None)
+26/07/14 09:43:17 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 41105, None)
+26/07/14 09:43:17 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 41105, None)
+==============================================================================
+BƯỚC 1 — Giẫm vào bẫy: filter theo _corrupt_record trên DF đọc thẳng từ CSV
+==============================================================================
+  bad.count()  = 0      <- SỰ THẬT: 7 (A23 đã chứng minh)
+  good.count() = 2007   <- SỰ THẬT: 2000
+
+  *** BẪY ĐÃ SẬP — VÀ NÓ SẬP THEO KIỂU TỆ NHẤT CÓ THỂ. ***
+  KHÔNG exception. KHÔNG warning. Chỉ có SỐ SAI, im như thóc.
+  Spark vừa khai báo 0 dòng hỏng trên một file có 7 dòng hỏng,
+  và lặng lẽ xếp cả 7 dòng rác đó vào nhóm 'sạch' (2007 dòng).
+  Nếu tin con số này, bạn vừa đẩy rác vào silver và ký tên xác nhận nó sạch.
+
+  VÌ SAO (giải thích kiến trúc — và tôi đã DỰ ĐOÁN SAI chỗ này, xem ghi chú):
+  - `_corrupt_record` KHÔNG phải cột có sẵn trong file. Nó do PARSER SINH RA
+    tại thời điểm đọc từng dòng.
+  - `count()` không cần giá trị của cột nào -> Catalyst prune xuống 0 cột ->
+    parser CHỈ ĐẾM DÒNG, KHÔNG parse field. Không parse thì không có dòng nào
+    được đánh dấu hỏng -> _corrupt_record toàn NULL -> bad = 0, good = TẤT CẢ.
+    (Đây CHÍNH XÁC là cơ chế đã làm DROPMALFORMED/FAILFAST tê liệt ở A22.
+     Một gốc rễ, hai bài. Không phải trùng hợp.)
+
+  GHI NHẬN TRUNG THỰC — dự đoán của tôi SAI:
+  Tôi viết script này với giả định Spark >= 2.3 sẽ NÉM AnalysisException khi
+  query chỉ tham chiếu _corrupt_record ('thà nổ còn hơn nói dối').
+  Spark 3.4.1 KHÔNG nổ. Nó trả về 0 và 2007 — SỐ SAI, IM LẶNG.
+  Log nói ngược lại dự đoán thì log đúng. Sửa niềm tin, không sửa số.
+  => Cái bẫy này NGUY HIỂM HƠN tôi tưởng: không có tiếng nổ nào để báo bạn biết.
+     Thứ duy nhất cứu bạn là ĐỐI CHIẾU với một con số bạn tin được từ nguồn khác.
+
+==============================================================================
+BƯỚC 2 — Ba cách sửa, đo thật
+==============================================================================
+
+--- Cách 1: .cache() trước khi filter
+  [bench] cache: count() (vật chất hoá)          lạnh=   371.5 ms | ấm(min lần 2-3)=    72.8 ms | kết quả=2007
+  [bench] cache: bad.count()                     lạnh=   144.1 ms | ấm(min lần 2-3)=    71.2 ms | kết quả=7
+  [bench] cache: good.count()                    lạnh=    74.4 ms | ấm(min lần 2-3)=    81.4 ms | kết quả=2000
+
+--- Cách 2: ghi Parquet tạm rồi đọc lại
+  [bench] parquet: write (action thật)           lạnh=   639.2 ms | ấm(min lần 2-3)=    97.8 ms | kết quả=written
+  [bench] parquet: bad.count()                   lạnh=   167.4 ms | ấm(min lần 2-3)=    71.7 ms | kết quả=7
+  [bench] parquet: good.count()                  lạnh=    95.0 ms | ấm(min lần 2-3)=    64.7 ms | kết quả=2000
+
+--- Cách 3: .persist(DISK_ONLY) + trigger action
+26/07/14 09:43:22 WARN CacheManager: Asked to cache already cached data.
+  [bench] persist(DISK_ONLY): count()            lạnh=    50.7 ms | ấm(min lần 2-3)=    49.4 ms | kết quả=2007
+  [bench] persist(DISK_ONLY): bad.count()        lạnh=    63.0 ms | ấm(min lần 2-3)=    44.4 ms | kết quả=7
+  [bench] persist(DISK_ONLY): good.count()       lạnh=    43.0 ms | ấm(min lần 2-3)=    40.8 ms | kết quả=2000
+
+==============================================================================
+BẢNG SO SÁNH 3 CÁCH SỬA (dán vào report)
+==============================================================================
+
+| Cách sửa | Tổng thời gian ấm (ms) | dòng hỏng | dòng sạch | Dữ liệu nằm ở đâu | Còn lỗi? |
+|---|---|---|---|---|---|
+| `.cache()` + action | 225.4 | 7 | 2000 | RAM (spill ra đĩa nếu hết chỗ) | KHÔNG |
+| ghi Parquet tạm rồi đọc lại | 234.1 | 7 | 2000 | ĐĨA (bền, job khác dùng lại được) | KHÔNG |
+| `.persist(DISK_ONLY)` + action | 134.6 | 7 | 2000 | ĐĨA của executor (mất khi app tắt) | KHÔNG |
+
+HIỆN TƯỢNG GỐC: KHÔNG nổ — trả SỐ SAI im lặng (bad=0 thay vì 7). Xem bước 1.
+
+CHỌN CHO src/ingest.py: **.cache() + một action ngay sau đó**.
+  Vì sao:
+  1. Rẻ nhất trong 3 cách (xem bảng — không phải vì tôi đoán, vì tôi đo).
+  2. orders chỉ ~17 MB / 99k dòng, thừa sức nằm trong 1049 MB RAM mỗi executor
+     -> cache không spill, không đánh đổi gì.
+  3. Ta CẦN đọc DataFrame này 2 lần (một lần lọc bad -> quarantine, một lần lọc
+     good -> silver). Không cache thì Spark đọc + parse CSV HAI LẦN. cache là
+     thứ đúng phải làm ngay cả khi không có cái bẫy này.
+  KHI NÀO ĐỔI Ý: nếu dữ liệu ×100 (A40) không còn vừa RAM -> chuyển sang cách 2
+  (ghi bronze Parquet rồi đọc lại). Lúc đó "cách sửa cái bẫy" và "tầng bronze"
+  hoá ra là CÙNG MỘT THỨ — đó là lý do kiến trúc medallion tồn tại.
+
+CÂU PHẢI THUỘC: đừng bao giờ filter theo _corrupt_record trên một DataFrame vừa
+đọc thẳng từ CSV/JSON mà chưa vật chất hoá. Phải có một rào cản ở giữa:
+cache / persist / ghi-rồi-đọc-lại.
+

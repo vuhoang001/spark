@@ -1,0 +1,152 @@
+26/07/14 08:58:32 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 08:58:32 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 08:58:32 INFO ResourceUtils: ==============================================================
+26/07/14 08:58:32 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 08:58:32 INFO ResourceUtils: ==============================================================
+26/07/14 08:58:32 INFO SparkContext: Submitted application: a04-kill-oom
+26/07/14 08:58:32 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 08:58:32 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 08:58:32 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 08:58:33 INFO SecurityManager: Changing view acls to: root
+26/07/14 08:58:33 INFO SecurityManager: Changing modify acls to: root
+26/07/14 08:58:33 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 08:58:33 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 08:58:33 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 08:58:33 INFO Utils: Successfully started service 'sparkDriver' on port 45383.
+26/07/14 08:58:33 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 08:58:33 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 08:58:33 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 08:58:33 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 08:58:33 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 08:58:33 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-01c79c63-9c73-4c8d-b053-38e133c0b19a
+26/07/14 08:58:33 INFO MemoryStore: MemoryStore started with capacity 96.0 MiB
+26/07/14 08:58:33 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 08:58:33 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 08:58:33 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 08:58:33 INFO Executor: Starting executor ID driver on host 8aca0779bea3
+26/07/14 08:58:33 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/07/14 08:58:33 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 42251.
+26/07/14 08:58:33 INFO NettyBlockTransferService: Server created on 8aca0779bea3:42251
+26/07/14 08:58:33 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 08:58:33 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 42251, None)
+26/07/14 08:58:33 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:42251 with 96.0 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 42251, None)
+26/07/14 08:58:33 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 42251, None)
+26/07/14 08:58:33 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 42251, None)
+==============================================================================
+A4 — MODE kill-oom
+==============================================================================
+master                     : local[2]
+spark.driver.memory (conf) : 460m
+spark.driver.maxResultSize : (mặc định 1g)
+JVM driver maxMemory THẬT  : 460 MB
+26/07/14 08:58:33 INFO SharedState: Setting hive.metastore.warehouse.dir ('null') to the value of spark.sql.warehouse.dir.
+26/07/14 08:58:33 INFO SharedState: Warehouse path is 'file:/workspace/spark-warehouse'.
+26/07/14 08:58:34 INFO InMemoryFileIndex: It took 28 ms to list leaf files for 1 paths.
+26/07/14 08:58:34 INFO InMemoryFileIndex: It took 1 ms to list leaf files for 1 paths.
+26/07/14 08:58:35 INFO FileSourceStrategy: Pushed Filters: 
+26/07/14 08:58:35 INFO FileSourceStrategy: Post-Scan Filters: (length(trim(value#0, None)) > 0)
+26/07/14 08:58:35 INFO CodeGenerator: Code generated in 108.675295 ms
+26/07/14 08:58:35 INFO MemoryStore: Block broadcast_0 stored as values in memory (estimated size 199.5 KiB, free 95.8 MiB)
+26/07/14 08:58:35 INFO MemoryStore: Block broadcast_0_piece0 stored as bytes in memory (estimated size 34.2 KiB, free 95.8 MiB)
+26/07/14 08:58:35 INFO BlockManagerInfo: Added broadcast_0_piece0 in memory on 8aca0779bea3:42251 (size: 34.2 KiB, free: 96.0 MiB)
+26/07/14 08:58:35 INFO SparkContext: Created broadcast 0 from csv at <unknown>:0
+26/07/14 08:58:35 INFO FileSourceScanExec: Planning scan with bin packing, max size: 32734093 bytes, open cost is considered as scanning 4194304 bytes.
+26/07/14 08:58:36 INFO SparkContext: Starting job: csv at <unknown>:0
+26/07/14 08:58:36 INFO DAGScheduler: Got job 0 (csv at <unknown>:0) with 1 output partitions
+26/07/14 08:58:36 INFO DAGScheduler: Final stage: ResultStage 0 (csv at <unknown>:0)
+26/07/14 08:58:36 INFO DAGScheduler: Parents of final stage: List()
+26/07/14 08:58:36 INFO DAGScheduler: Missing parents: List()
+26/07/14 08:58:36 INFO DAGScheduler: Submitting ResultStage 0 (MapPartitionsRDD[3] at csv at <unknown>:0), which has no missing parents
+26/07/14 08:58:36 INFO MemoryStore: Block broadcast_1 stored as values in memory (estimated size 12.1 KiB, free 95.8 MiB)
+26/07/14 08:58:36 INFO MemoryStore: Block broadcast_1_piece0 stored as bytes in memory (estimated size 6.0 KiB, free 95.8 MiB)
+26/07/14 08:58:36 INFO BlockManagerInfo: Added broadcast_1_piece0 in memory on 8aca0779bea3:42251 (size: 6.0 KiB, free: 96.0 MiB)
+26/07/14 08:58:36 INFO SparkContext: Created broadcast 1 from broadcast at DAGScheduler.scala:1535
+26/07/14 08:58:36 INFO DAGScheduler: Submitting 1 missing tasks from ResultStage 0 (MapPartitionsRDD[3] at csv at <unknown>:0) (first 15 tasks are for partitions Vector(0))
+26/07/14 08:58:36 INFO TaskSchedulerImpl: Adding task set 0.0 with 1 tasks resource profile 0
+26/07/14 08:58:36 INFO TaskSetManager: Starting task 0.0 in stage 0.0 (TID 0) (8aca0779bea3, executor driver, partition 0, PROCESS_LOCAL, 7938 bytes) 
+26/07/14 08:58:36 INFO Executor: Running task 0.0 in stage 0.0 (TID 0)
+26/07/14 08:58:36 INFO FileScanRDD: Reading File path: file:///workspace/data/olist/olist_geolocation_dataset.csv, range: 0-32734093, partition values: [empty row]
+26/07/14 08:58:36 INFO CodeGenerator: Code generated in 8.09709 ms
+26/07/14 08:58:36 INFO Executor: Finished task 0.0 in stage 0.0 (TID 0). 1669 bytes result sent to driver
+26/07/14 08:58:36 INFO TaskSetManager: Finished task 0.0 in stage 0.0 (TID 0) in 114 ms on 8aca0779bea3 (executor driver) (1/1)
+26/07/14 08:58:36 INFO TaskSchedulerImpl: Removed TaskSet 0.0, whose tasks have all completed, from pool 
+26/07/14 08:58:36 INFO DAGScheduler: ResultStage 0 (csv at <unknown>:0) finished in 0.189 s
+26/07/14 08:58:36 INFO DAGScheduler: Job 0 is finished. Cancelling potential speculative or zombie tasks for this job
+26/07/14 08:58:36 INFO TaskSchedulerImpl: Killing all running tasks in stage 0: Stage finished
+26/07/14 08:58:36 INFO DAGScheduler: Job 0 finished: csv at <unknown>:0, took 0.212196 s
+26/07/14 08:58:36 INFO CodeGenerator: Code generated in 6.049831 ms
+26/07/14 08:58:36 INFO FileSourceStrategy: Pushed Filters: 
+26/07/14 08:58:36 INFO FileSourceStrategy: Post-Scan Filters: 
+26/07/14 08:58:36 INFO MemoryStore: Block broadcast_2 stored as values in memory (estimated size 199.5 KiB, free 95.6 MiB)
+26/07/14 08:58:36 INFO MemoryStore: Block broadcast_2_piece0 stored as bytes in memory (estimated size 34.2 KiB, free 95.5 MiB)
+26/07/14 08:58:36 INFO BlockManagerInfo: Added broadcast_2_piece0 in memory on 8aca0779bea3:42251 (size: 34.2 KiB, free: 95.9 MiB)
+26/07/14 08:58:36 INFO SparkContext: Created broadcast 2 from csv at <unknown>:0
+26/07/14 08:58:36 INFO FileSourceScanExec: Planning scan with bin packing, max size: 32734093 bytes, open cost is considered as scanning 4194304 bytes.
+file                       : /workspace/data/olist/olist_geolocation_dataset.csv
+26/07/14 08:58:36 INFO FileSourceStrategy: Pushed Filters: 
+26/07/14 08:58:36 INFO FileSourceStrategy: Post-Scan Filters: 
+26/07/14 08:58:36 INFO MemoryStore: Block broadcast_3 stored as values in memory (estimated size 199.4 KiB, free 95.3 MiB)
+26/07/14 08:58:36 INFO MemoryStore: Block broadcast_3_piece0 stored as bytes in memory (estimated size 34.2 KiB, free 95.3 MiB)
+26/07/14 08:58:36 INFO BlockManagerInfo: Added broadcast_3_piece0 in memory on 8aca0779bea3:42251 (size: 34.2 KiB, free: 95.9 MiB)
+26/07/14 08:58:36 INFO SparkContext: Created broadcast 3 from javaToPython at <unknown>:0
+26/07/14 08:58:36 INFO FileSourceScanExec: Planning scan with bin packing, max size: 32734093 bytes, open cost is considered as scanning 4194304 bytes.
+số partition               : 2
+
+>>> Sắp gọi: df.collect()
+>>> KỲ VỌNG: driver chết. Nếu nó KHÔNG chết, ghi lại đúng như vậy — đừng bịa lỗi.
+
+26/07/14 08:58:36 INFO SparkContext: Starting job: collect at /workspace/labs/mini-project-1/exercises/a04_kill_driver.py:132
+26/07/14 08:58:36 INFO DAGScheduler: Got job 1 (collect at /workspace/labs/mini-project-1/exercises/a04_kill_driver.py:132) with 2 output partitions
+26/07/14 08:58:36 INFO DAGScheduler: Final stage: ResultStage 1 (collect at /workspace/labs/mini-project-1/exercises/a04_kill_driver.py:132)
+26/07/14 08:58:36 INFO DAGScheduler: Parents of final stage: List()
+26/07/14 08:58:36 INFO DAGScheduler: Missing parents: List()
+26/07/14 08:58:36 INFO DAGScheduler: Submitting ResultStage 1 (MapPartitionsRDD[16] at collect at /workspace/labs/mini-project-1/exercises/a04_kill_driver.py:132), which has no missing parents
+26/07/14 08:58:36 INFO MemoryStore: Block broadcast_4 stored as values in memory (estimated size 11.1 KiB, free 95.3 MiB)
+26/07/14 08:58:36 INFO MemoryStore: Block broadcast_4_piece0 stored as bytes in memory (estimated size 6.0 KiB, free 95.3 MiB)
+26/07/14 08:58:36 INFO BlockManagerInfo: Added broadcast_4_piece0 in memory on 8aca0779bea3:42251 (size: 6.0 KiB, free: 95.9 MiB)
+26/07/14 08:58:36 INFO SparkContext: Created broadcast 4 from broadcast at DAGScheduler.scala:1535
+26/07/14 08:58:36 INFO DAGScheduler: Submitting 2 missing tasks from ResultStage 1 (MapPartitionsRDD[16] at collect at /workspace/labs/mini-project-1/exercises/a04_kill_driver.py:132) (first 15 tasks are for partitions Vector(0, 1))
+26/07/14 08:58:36 INFO TaskSchedulerImpl: Adding task set 1.0 with 2 tasks resource profile 0
+26/07/14 08:58:36 INFO TaskSetManager: Starting task 0.0 in stage 1.0 (TID 1) (8aca0779bea3, executor driver, partition 0, PROCESS_LOCAL, 7938 bytes) 
+26/07/14 08:58:36 INFO TaskSetManager: Starting task 1.0 in stage 1.0 (TID 2) (8aca0779bea3, executor driver, partition 1, PROCESS_LOCAL, 7938 bytes) 
+26/07/14 08:58:36 INFO Executor: Running task 0.0 in stage 1.0 (TID 1)
+26/07/14 08:58:36 INFO Executor: Running task 1.0 in stage 1.0 (TID 2)
+26/07/14 08:58:36 INFO FileScanRDD: Reading File path: file:///workspace/data/olist/olist_geolocation_dataset.csv, range: 32734093-61273883, partition values: [empty row]
+26/07/14 08:58:36 INFO FileScanRDD: Reading File path: file:///workspace/data/olist/olist_geolocation_dataset.csv, range: 0-32734093, partition values: [empty row]
+26/07/14 08:58:36 INFO CodeGenerator: Code generated in 7.882497 ms
+26/07/14 08:58:36 INFO BlockManagerInfo: Removed broadcast_0_piece0 on 8aca0779bea3:42251 in memory (size: 34.2 KiB, free: 95.9 MiB)
+26/07/14 08:58:36 INFO BlockManagerInfo: Removed broadcast_2_piece0 on 8aca0779bea3:42251 in memory (size: 34.2 KiB, free: 96.0 MiB)
+26/07/14 08:58:36 INFO BlockManagerInfo: Removed broadcast_1_piece0 on 8aca0779bea3:42251 in memory (size: 6.0 KiB, free: 96.0 MiB)
+26/07/14 08:58:37 INFO MemoryStore: Block taskresult_2 stored as bytes in memory (estimated size 19.2 MiB, free 76.5 MiB)
+26/07/14 08:58:37 INFO BlockManagerInfo: Added taskresult_2 in memory on 8aca0779bea3:42251 (size: 19.2 MiB, free: 76.7 MiB)
+26/07/14 08:58:37 INFO Executor: Finished task 1.0 in stage 1.0 (TID 2). 20182686 bytes result sent via BlockManager)
+26/07/14 08:58:37 INFO TransportClientFactory: Successfully created connection to 8aca0779bea3/172.22.0.5:42251 after 24 ms (0 ms spent in bootstraps)
+26/07/14 08:58:37 INFO MemoryStore: Block taskresult_1 stored as bytes in memory (estimated size 21.6 MiB, free 54.9 MiB)
+26/07/14 08:58:37 INFO BlockManagerInfo: Added taskresult_1 in memory on 8aca0779bea3:42251 (size: 21.6 MiB, free: 55.1 MiB)
+26/07/14 08:58:37 INFO Executor: Finished task 0.0 in stage 1.0 (TID 1). 22622543 bytes result sent via BlockManager)
+26/07/14 08:58:37 INFO TaskSetManager: Finished task 1.0 in stage 1.0 (TID 2) in 819 ms on 8aca0779bea3 (executor driver) (1/2)
+26/07/14 08:58:37 INFO BlockManagerInfo: Removed taskresult_2 on 8aca0779bea3:42251 in memory (size: 19.2 MiB, free: 74.4 MiB)
+26/07/14 08:58:37 INFO TaskSetManager: Finished task 0.0 in stage 1.0 (TID 1) in 862 ms on 8aca0779bea3 (executor driver) (2/2)
+26/07/14 08:58:37 INFO TaskSchedulerImpl: Removed TaskSet 1.0, whose tasks have all completed, from pool 
+26/07/14 08:58:37 INFO BlockManagerInfo: Removed taskresult_1 on 8aca0779bea3:42251 in memory (size: 21.6 MiB, free: 96.0 MiB)
+26/07/14 08:58:37 INFO DAGScheduler: ResultStage 1 (collect at /workspace/labs/mini-project-1/exercises/a04_kill_driver.py:132) finished in 0.870 s
+26/07/14 08:58:37 INFO DAGScheduler: Job 1 is finished. Cancelling potential speculative or zombie tasks for this job
+26/07/14 08:58:37 INFO TaskSchedulerImpl: Killing all running tasks in stage 1: Stage finished
+26/07/14 08:58:37 INFO DAGScheduler: Job 1 finished: collect at /workspace/labs/mini-project-1/exercises/a04_kill_driver.py:132, took 0.873104 s
+26/07/14 08:58:37 INFO BlockManagerInfo: Removed broadcast_4_piece0 on 8aca0779bea3:42251 in memory (size: 6.0 KiB, free: 96.0 MiB)
+!!! KHÔNG CHẾT — driver nuốt trôi.
+    số dòng kéo về driver: 1,000,163
+    thời gian            : 3,691 ms
+    => bóp driver nhỏ hơn nữa (--driver-memory 256m) hoặc dùng mode kill-maxresult.
+26/07/14 08:58:40 INFO SparkContext: SparkContext is stopping with exitCode 0.
+26/07/14 08:58:40 INFO SparkUI: Stopped Spark web UI at http://8aca0779bea3:4040
+26/07/14 08:58:40 INFO MapOutputTrackerMasterEndpoint: MapOutputTrackerMasterEndpoint stopped!
+26/07/14 08:58:40 INFO MemoryStore: MemoryStore cleared
+26/07/14 08:58:40 INFO BlockManager: BlockManager stopped
+26/07/14 08:58:40 INFO BlockManagerMaster: BlockManagerMaster stopped
+26/07/14 08:58:40 INFO OutputCommitCoordinator$OutputCommitCoordinatorEndpoint: OutputCommitCoordinator stopped!
+26/07/14 08:58:40 INFO SparkContext: Successfully stopped SparkContext
+26/07/14 08:58:40 INFO ShutdownHookManager: Shutdown hook called
+26/07/14 08:58:40 INFO ShutdownHookManager: Deleting directory /tmp/spark-ca875407-d11d-4ab3-a7ae-0ca4e443fe66/pyspark-9dbaaf8d-0014-4b51-b751-6b5aaa4f3382
+26/07/14 08:58:40 INFO ShutdownHookManager: Deleting directory /tmp/spark-e71faeab-057e-4d50-a4ee-df9a30611821
+26/07/14 08:58:40 INFO ShutdownHookManager: Deleting directory /tmp/spark-ca875407-d11d-4ab3-a7ae-0ca4e443fe66

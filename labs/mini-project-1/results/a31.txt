@@ -1,0 +1,83 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master 'local[2]' /workspace/labs/mini-project-1/exercises/a31_four_codecs.py
+26/07/14 09:52:13 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:52:14 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:52:14 INFO ResourceUtils: ==============================================================
+26/07/14 09:52:14 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:52:14 INFO ResourceUtils: ==============================================================
+26/07/14 09:52:14 INFO SparkContext: Submitted application: a31-four-codecs
+26/07/14 09:52:14 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:52:14 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:52:14 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:52:14 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:52:14 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:52:14 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:52:14 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:52:14 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:52:14 INFO Utils: Successfully started service 'sparkDriver' on port 41425.
+26/07/14 09:52:14 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:52:14 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:52:14 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:52:14 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:52:14 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:52:14 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-31e26bf7-3239-4f6d-b449-b284989ecb64
+26/07/14 09:52:14 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:52:14 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:52:14 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:52:14 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:52:14 INFO Executor: Starting executor ID driver on host 8aca0779bea3
+26/07/14 09:52:14 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/07/14 09:52:14 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 44939.
+26/07/14 09:52:14 INFO NettyBlockTransferService: Server created on 8aca0779bea3:44939
+26/07/14 09:52:14 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:52:14 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 44939, None)
+26/07/14 09:52:14 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:44939 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 44939, None)
+26/07/14 09:52:14 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 44939, None)
+26/07/14 09:52:14 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 44939, None)
+
+==============================================================================
+A31 — CHUẨN BỊ
+==============================================================================
+Nguồn: silver (/workspace/data/output/silver/orders_clean) | 99,441 dòng | 12 cột | 4 partition (=> 4 file/codec)
+df đã cache -> cột 'thời gian ghi' chỉ còn chi phí serialize + nén + ghi đĩa.
+
+  [write none] các lần chạy: 0.75s, 0.27s, 0.24s  -> lấy min(sau warmup) = 0.24s
+  [read-full none] các lần chạy: 0.20s, 0.16s, 0.08s  -> lấy min(sau warmup) = 0.08s
+  [read-1col none] các lần chạy: 0.22s, 0.12s, 0.10s  -> lấy min(sau warmup) = 0.10s
+  [write snappy] các lần chạy: 0.26s, 0.29s, 0.27s  -> lấy min(sau warmup) = 0.27s
+  [read-full snappy] các lần chạy: 0.10s, 0.11s, 0.10s  -> lấy min(sau warmup) = 0.10s
+  [read-1col snappy] các lần chạy: 0.11s, 0.13s, 0.09s  -> lấy min(sau warmup) = 0.09s
+  [write gzip] các lần chạy: 0.47s, 0.48s, 0.49s  -> lấy min(sau warmup) = 0.48s
+  [read-full gzip] các lần chạy: 0.11s, 0.10s, 0.10s  -> lấy min(sau warmup) = 0.10s
+  [read-1col gzip] các lần chạy: 0.09s, 0.08s, 0.09s  -> lấy min(sau warmup) = 0.08s
+  [write zstd] các lần chạy: 0.25s, 0.28s, 0.30s  -> lấy min(sau warmup) = 0.28s
+  [read-full zstd] các lần chạy: 0.08s, 0.08s, 0.09s  -> lấy min(sau warmup) = 0.08s
+  [read-1col zstd] các lần chạy: 0.10s, 0.10s, 0.08s  -> lấy min(sau warmup) = 0.08s
+
+==============================================================================
+BẢNG A31 — 4 CODEC × 4 SỐ ĐO (mọi thời gian = min lần 2-3, đã bỏ warmup)
+==============================================================================
+| codec | số file | size | size (byte) | ghi | đọc-full | đọc-1-cột | input bytes (đọc-full) | tỉ lệ nén vs none |
+|---|---|---|---|---|---|---|---|---|
+| none | 4 | 12.9 MB | 13,500,412 | 0.24s | 0.08s | 0.10s | 12.9 MB | 1.00× |
+| snappy | 4 | 10.7 MB | 11,238,747 | 0.27s | 0.10s | 0.09s | 10.8 MB | 1.20× |
+| gzip | 4 | 7.6 MB | 8,016,146 | 0.48s | 0.10s | 0.08s | 7.7 MB | 1.68× |
+| zstd | 4 | 7.2 MB | 7,551,653 | 0.28s | 0.08s | 0.08s | 7.3 MB | 1.79× |
+
+
+==============================================================================
+A31 — CÁCH ĐỌC BẢNG (và cái bẫy 'zstd nhanh hơn none')
+==============================================================================
+1. Cột 'size' là thứ duy nhất chắc chắn ổn định. Các cột giây trên dữ liệu 17MB
+   bị overhead cố định (lập plan ~0.2-0.5s) nuốt mất -> chênh lệch nhỏ có thể là NHIỄU.
+   Nếu 2 codec chênh nhau < 15% thời gian, KHÔNG kết luận cái nào nhanh hơn.
+2. Nghịch lý hay gặp: 'none' đọc CHẬM hơn 'snappy'. Không vô lý:
+   none phải kéo NHIỀU BYTE hơn từ đĩa; snappy giải nén rất rẻ (~GB/s).
+   Đọc dữ liệu = I/O + CPU. Nén = trả CPU để mua I/O. Với đĩa chậm, giao dịch này LỜI.
+3. QUYẾT ĐỊNH CHO PIPELINE (điền vào report, dựa trên số ở bảng trên, không dựa cảm tính):
+   - snappy: nén khá, CPU nén/giải nén rẻ nhất -> mặc định cho tầng SILVER (ghi/đọc nhiều lần).
+   - zstd  : nén tốt gần gzip, giải nén nhanh gần snappy -> tốt cho GOLD/archive (ghi 1 đọc nhiều).
+   - gzip  : nén tốt nhất nhưng CPU đắt; với Parquet nó VẪN splittable (nén theo page,
+             không nén nguyên file) -> lập luận 'gzip = 1 task' chỉ đúng cho .csv.gz.
+   - none  : chỉ dùng khi CPU là nút cổ chai và đĩa/mạng rẻ vô hạn — hiếm.
+   Viết vào report theo mẫu: 'chọn ___ vì nén hơn none ___×, ghi chậm hơn snappy ___%,
+   đọc-1-cột chênh ___s' — có số mới được điểm.

@@ -1,0 +1,118 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master 'local[2]' /workspace/labs/mini-project-1/exercises/a21_schema_infer_then_fix.py
+26/07/14 09:36:11 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:36:11 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:36:11 INFO ResourceUtils: ==============================================================
+26/07/14 09:36:11 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:36:11 INFO ResourceUtils: ==============================================================
+26/07/14 09:36:11 INFO SparkContext: Submitted application: a21-schema
+26/07/14 09:36:11 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:36:11 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:36:11 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:36:11 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:36:11 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:36:11 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:36:11 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:36:11 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:36:12 INFO Utils: Successfully started service 'sparkDriver' on port 42841.
+26/07/14 09:36:12 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:36:12 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:36:12 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:36:12 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:36:12 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:36:12 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-6276f8b2-828a-4c40-9566-06e8ac56a885
+26/07/14 09:36:12 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:36:12 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:36:12 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:36:12 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:36:12 INFO Executor: Starting executor ID driver on host 8aca0779bea3
+26/07/14 09:36:12 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/07/14 09:36:12 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 39171.
+26/07/14 09:36:12 INFO NettyBlockTransferService: Server created on 8aca0779bea3:39171
+26/07/14 09:36:12 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:36:12 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 39171, None)
+26/07/14 09:36:12 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:39171 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 39171, None)
+26/07/14 09:36:12 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 39171, None)
+26/07/14 09:36:12 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 39171, None)
+
+==============================================================================
+PHẦN 1 — inferSchema đoán gì? (chạy thật, 1 lần, ở dev)
+==============================================================================
+
+--- orders  (/workspace/data/olist/olist_orders_dataset.csv)
+    thời gian lấy schema: inferSchema =   3034.6 ms  |  schema tường minh =   27.0 ms
+    (chênh lệch này = số tiền bạn trả cho sự lười biếng. Nó là I/O THẬT, xảy ra ngay cả khi bạn chưa gọi action nào.)
+    treeString mà inferSchema đoán ra:
+      root
+       |-- order_id: string (nullable = true)
+       |-- customer_id: string (nullable = true)
+       |-- order_status: string (nullable = true)
+       |-- order_purchase_timestamp: timestamp (nullable = true)
+       |-- order_approved_at: timestamp (nullable = true)
+       |-- order_delivered_carrier_date: timestamp (nullable = true)
+       |-- order_delivered_customer_date: timestamp (nullable = true)
+       |-- order_estimated_delivery_date: timestamp (nullable = true)
+
+--- order_items  (/workspace/data/olist/olist_order_items_dataset.csv)
+    thời gian lấy schema: inferSchema =    524.0 ms  |  schema tường minh =   13.6 ms
+    (chênh lệch này = số tiền bạn trả cho sự lười biếng. Nó là I/O THẬT, xảy ra ngay cả khi bạn chưa gọi action nào.)
+    treeString mà inferSchema đoán ra:
+      root
+       |-- order_id: string (nullable = true)
+       |-- order_item_id: integer (nullable = true)
+       |-- product_id: string (nullable = true)
+       |-- seller_id: string (nullable = true)
+       |-- shipping_limit_date: timestamp (nullable = true)
+       |-- price: double (nullable = true)
+       |-- freight_value: double (nullable = true)
+
+--- customers  (/workspace/data/olist/olist_customers_dataset.csv)
+    thời gian lấy schema: inferSchema =    204.3 ms  |  schema tường minh =   12.9 ms
+    (chênh lệch này = số tiền bạn trả cho sự lười biếng. Nó là I/O THẬT, xảy ra ngay cả khi bạn chưa gọi action nào.)
+    treeString mà inferSchema đoán ra:
+      root
+       |-- customer_id: string (nullable = true)
+       |-- customer_unique_id: string (nullable = true)
+       |-- customer_zip_code_prefix: integer (nullable = true)
+       |-- customer_city: string (nullable = true)
+       |-- customer_state: string (nullable = true)
+
+==============================================================================
+PHẦN 2 — Bảng sửa tay (dán thẳng vào report)
+==============================================================================
+
+| Bảng | Cột | Spark (inferSchema) đoán | Tôi sửa thành | Vì sao |
+|---|---|---|---|---|
+| customers | `customer_zip_code_prefix` | IntegerType | **StringType** | Mã bưu chính có số 0 đứng đầu ('01310'). Integer nuốt số 0 -> sai vĩnh viễn, không cứu được. |
+| orders | `order_id` | StringType | **StringType (giữ, nhưng nullable=True)** | Kiểu đúng rồi. Cái phải sửa là nullable: KHÔNG khai False dù nó là khoá — xem ghi chú NULLABLE. |
+| order_items | `order_item_id` | IntegerType | **IntegerType (giữ)** | Số thật (thứ tự món trong đơn), có đem đi so sánh/max. Giữ Integer là đúng. |
+| order_items | `price` | DoubleType | **DoubleType (nợ kỹ thuật, đúng phải là DecimalType(10,2))** | Tiền bằng Double = sai số nhị phân khi SUM triệu dòng. Bài học chấp nhận Double; production phải Decimal. |
+| order_items | `freight_value` | DoubleType | **DoubleType (nợ kỹ thuật, như trên)** | Cùng lý do với price. |
+| orders | `order_purchase_timestamp` | TimestampType (may mắn) | **TimestampType (khai tay)** | inferSchema chỉ đoán đúng vì file HÔM NAY sạch. Một dòng 'hôm qua' là cả cột tụt xuống String — im lặng. |
+| orders | `order_delivered_customer_date` | TimestampType | **TimestampType (khai tay)** | Cột này có NULL thật (đơn chưa giao). Khai tay để chắc chắn NULL là NULL, không phải chuỗi rỗng. |
+| orders | `_corrupt_record` | (không có) | **StringType — tự thêm** | inferSchema KHÔNG BAO GIỜ sinh cột này. Không khai = không có quarantine = dòng hỏng biến mất im lặng. |
+
+=> 8 cột được xem xét/sửa (đề yêu cầu >= 5).
+
+==============================================================================
+PHẦN 3 — Thí nghiệm nullable=False (cái bẫy đáng giá nhất bài này)
+==============================================================================
+
+[3a] Schema thật thà (nullable=True):
+     tổng dòng                                  = 99441
+     order_delivered_customer_date IS NULL      = 2965
+     -> cột này CÓ null thật (đơn chưa giao xong).
+
+[3b] Schema NÓI DỐI (nullable=False cho order_delivered_customer_date):
+     schema Spark ghi nhận (nullable của cột thứ 7):
+       order_delivered_customer_date: timestamp, nullable=True
+     count() chạy được, KHÔNG exception: tổng = 99441
+     số dòng NULL đếm được qua schema nói dối = 2965
+     (Ghi nhận đúng như quan sát được, không suy diễn thêm.)
+
+[3c] Ghi Parquet bằng schema nói dối: GHI ĐƯỢC, 99441 dòng.
+     nullable của cột sau khi đọc lại từ Parquet: True
+     số NULL đọc lại được từ Parquet: 2965
+
+BÀI HỌC: nullable=False không phải một RÀNG BUỘC (constraint) như trong SQL.
+Nó là một LỜI HỨA gửi cho optimizer. Spark không kiểm tra, chỉ tin và tối ưu theo.
+Ràng buộc thật phải viết bằng một CHECK thật -> đó là data quality gate (A38).

@@ -1,0 +1,166 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master 'local[2]' /workspace/labs/mini-project-1/exercises/a34_schema_evolution.py
+26/07/14 09:53:29 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:53:29 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:53:29 INFO ResourceUtils: ==============================================================
+26/07/14 09:53:29 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:53:29 INFO ResourceUtils: ==============================================================
+26/07/14 09:53:29 INFO SparkContext: Submitted application: a34-schema-evolution
+26/07/14 09:53:29 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:53:29 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:53:29 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:53:29 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:53:29 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:53:29 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:53:29 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:53:29 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:53:29 INFO Utils: Successfully started service 'sparkDriver' on port 38571.
+26/07/14 09:53:29 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:53:29 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:53:29 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:53:29 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:53:29 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:53:29 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-99180898-657b-4f09-b6b3-a3854925c2ee
+26/07/14 09:53:29 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:53:29 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:53:29 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:53:30 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:53:30 INFO Executor: Starting executor ID driver on host 8aca0779bea3
+26/07/14 09:53:30 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/07/14 09:53:30 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 46083.
+26/07/14 09:53:30 INFO NettyBlockTransferService: Server created on 8aca0779bea3:46083
+26/07/14 09:53:30 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:53:30 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 46083, None)
+26/07/14 09:53:30 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:46083 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 46083, None)
+26/07/14 09:53:30 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 46083, None)
+26/07/14 09:53:30 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 46083, None)
+
+==============================================================================
+A34 — CHUẨN BỊ
+==============================================================================
+Nguồn: silver (/workspace/data/output/silver/orders_clean)
+base = 99,441 dòng, cột: ['order_id', 'order_status', 'order_date', 'price'] (price: double)
+Mỗi kịch bản: ghi base (overwrite) -> APPEND một biến thể -> đọc 2 kiểu.
+
+26/07/14 09:53:39 ERROR Executor: Exception in task 1.0 in stage 57.0 (TID 906)
+org.apache.spark.SparkException: Failed merging schema:
+root
+ |-- order_id: string (nullable = true)
+ |-- order_status: string (nullable = true)
+ |-- order_date: date (nullable = true)
+ |-- price: double (nullable = true)
+.
+	at org.apache.spark.sql.errors.QueryExecutionErrors$.failedMergingSchemaError(QueryExecutionErrors.scala:2346)
+	at org.apache.spark.sql.execution.datasources.SchemaMergeUtils$.$anonfun$mergeSchemasInParallel$4(SchemaMergeUtils.scala:89)
+	at org.apache.spark.sql.execution.datasources.SchemaMergeUtils$.$anonfun$mergeSchemasInParallel$4$adapted(SchemaMergeUtils.scala:85)
+	at scala.collection.immutable.Stream.foreach(Stream.scala:533)
+	at org.apache.spark.sql.execution.datasources.SchemaMergeUtils$.$anonfun$mergeSchemasInParallel$2(SchemaMergeUtils.scala:85)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitions$2(RDD.scala:853)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitions$2$adapted(RDD.scala:853)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:92)
+	at org.apache.spark.TaskContext.runTaskWithListeners(TaskContext.scala:161)
+	at org.apache.spark.scheduler.Task.run(Task.scala:139)
+	at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$3(Executor.scala:554)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1529)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:557)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: org.apache.spark.SparkException: [CANNOT_MERGE_INCOMPATIBLE_DATA_TYPE] Failed to merge incompatible data types "STRING" and "DOUBLE".
+	at org.apache.spark.sql.errors.QueryExecutionErrors$.cannotMergeIncompatibleDataTypesError(QueryExecutionErrors.scala:1321)
+	at org.apache.spark.sql.types.StructType$.$anonfun$merge$3(StructType.scala:616)
+	at scala.Option.map(Option.scala:230)
+	at org.apache.spark.sql.types.StructType$.$anonfun$merge$2(StructType.scala:608)
+	at org.apache.spark.sql.types.StructType$.$anonfun$merge$2$adapted(StructType.scala:605)
+	at scala.collection.IndexedSeqOptimized.foreach(IndexedSeqOptimized.scala:36)
+	at scala.collection.IndexedSeqOptimized.foreach$(IndexedSeqOptimized.scala:33)
+	at scala.collection.mutable.ArrayOps$ofRef.foreach(ArrayOps.scala:198)
+	at org.apache.spark.sql.types.StructType$.$anonfun$merge$1(StructType.scala:605)
+	at org.apache.spark.sql.types.StructType$.mergeInternal(StructType.scala:653)
+	at org.apache.spark.sql.types.StructType$.merge(StructType.scala:599)
+	at org.apache.spark.sql.types.StructType.merge(StructType.scala:500)
+	at org.apache.spark.sql.execution.datasources.SchemaMergeUtils$.$anonfun$mergeSchemasInParallel$4(SchemaMergeUtils.scala:87)
+	... 17 more
+26/07/14 09:53:39 WARN TaskSetManager: Lost task 1.0 in stage 57.0 (TID 906) (8aca0779bea3 executor driver): org.apache.spark.SparkException: Failed merging schema:
+root
+ |-- order_id: string (nullable = true)
+ |-- order_status: string (nullable = true)
+ |-- order_date: date (nullable = true)
+ |-- price: double (nullable = true)
+.
+	at org.apache.spark.sql.errors.QueryExecutionErrors$.failedMergingSchemaError(QueryExecutionErrors.scala:2346)
+	at org.apache.spark.sql.execution.datasources.SchemaMergeUtils$.$anonfun$mergeSchemasInParallel$4(SchemaMergeUtils.scala:89)
+	at org.apache.spark.sql.execution.datasources.SchemaMergeUtils$.$anonfun$mergeSchemasInParallel$4$adapted(SchemaMergeUtils.scala:85)
+	at scala.collection.immutable.Stream.foreach(Stream.scala:533)
+	at org.apache.spark.sql.execution.datasources.SchemaMergeUtils$.$anonfun$mergeSchemasInParallel$2(SchemaMergeUtils.scala:85)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitions$2(RDD.scala:853)
+	at org.apache.spark.rdd.RDD.$anonfun$mapPartitions$2$adapted(RDD.scala:853)
+	at org.apache.spark.rdd.MapPartitionsRDD.compute(MapPartitionsRDD.scala:52)
+	at org.apache.spark.rdd.RDD.computeOrReadCheckpoint(RDD.scala:364)
+	at org.apache.spark.rdd.RDD.iterator(RDD.scala:328)
+	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:92)
+	at org.apache.spark.TaskContext.runTaskWithListeners(TaskContext.scala:161)
+	at org.apache.spark.scheduler.Task.run(Task.scala:139)
+	at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$3(Executor.scala:554)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1529)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:557)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: org.apache.spark.SparkException: [CANNOT_MERGE_INCOMPATIBLE_DATA_TYPE] Failed to merge incompatible data types "STRING" and "DOUBLE".
+	at org.apache.spark.sql.errors.QueryExecutionErrors$.cannotMergeIncompatibleDataTypesError(QueryExecutionErrors.scala:1321)
+	at org.apache.spark.sql.types.StructType$.$anonfun$merge$3(StructType.scala:616)
+	at scala.Option.map(Option.scala:230)
+	at org.apache.spark.sql.types.StructType$.$anonfun$merge$2(StructType.scala:608)
+	at org.apache.spark.sql.types.StructType$.$anonfun$merge$2$adapted(StructType.scala:605)
+	at scala.collection.IndexedSeqOptimized.foreach(IndexedSeqOptimized.scala:36)
+	at scala.collection.IndexedSeqOptimized.foreach$(IndexedSeqOptimized.scala:33)
+	at scala.collection.mutable.ArrayOps$ofRef.foreach(ArrayOps.scala:198)
+	at org.apache.spark.sql.types.StructType$.$anonfun$merge$1(StructType.scala:605)
+	at org.apache.spark.sql.types.StructType$.mergeInternal(StructType.scala:653)
+	at org.apache.spark.sql.types.StructType$.merge(StructType.scala:599)
+	at org.apache.spark.sql.types.StructType.merge(StructType.scala:500)
+	at org.apache.spark.sql.execution.datasources.SchemaMergeUtils$.$anonfun$mergeSchemasInParallel$4(SchemaMergeUtils.scala:87)
+	... 17 more
+
+26/07/14 09:53:39 ERROR TaskSetManager: Task 1 in stage 57.0 failed 1 times; aborting job
+
+==============================================================================
+BẢNG A34 — 4 KỊCH BẢN × 2 CÁCH ĐỌC
+==============================================================================
+| kịch bản | cách đọc | đọc được? | thấy cột thay đổi? | số dòng | ghi chú / lỗi |
+|---|---|---|---|---|---|
+| x1. THÊM cột (order_priority) | mặc định | OK | KHÔNG | 100,441 |  |
+| x1. THÊM cột (order_priority) | mergeSchema=true | OK | có | 100,441 | giá trị ở file CŨ = NULL |
+| x2. THIẾU cột (bỏ order_status) | mặc định | OK | KHÔNG | 100,441 | dòng của file mới -> order_status = NULL |
+| x2. THIẾU cột (bỏ order_status) | mergeSchema=true | OK | có | 100,441 | dòng của file mới -> order_status = NULL |
+| x3. ĐỔI KIỂU (price double->string) | mặc định | OK | có | 100,441 | đọc được (schema lấy từ 1 file — xem cảnh báo bên dưới) |
+| x3. ĐỔI KIỂU (price double->string) | mergeSchema=true | LỖI | KHÔNG | — | Py4JJavaError: An error occurred while calling o129.parquet. |
+
+
+==============================================================================
+A34 — DIỄN GIẢI
+==============================================================================
+mergeSchema: 1,000 dòng có order_priority='HIGH' (file mới), 99,441 dòng NULL (file cũ — Parquet KHÔNG viết lại file cũ, reader tự điền NULL cho cột thiếu).
+
+x3 — lúc GHI append kiểu lệch: OK
+   Ghi KHÔNG lỗi = điều đáng sợ nhất của Parquet trần: dữ liệu hỏng chui được vào
+   bảng, không ai chặn. Lỗi chỉ nổ ở người ĐỌC, có thể là 3 tuần sau, ở team khác.
+
+QUY LUẬT RÚT RA (Parquet trần + thư mục):
+  THÊM cột  -> CHỊU ĐƯỢC. mergeSchema=true đọc ra đủ; file cũ điền NULL. An toàn.
+  BỎ cột    -> CHỊU ĐƯỢC. Cột thiếu ở file mới = NULL. Nhưng SILENT: không ai báo
+               cho bạn biết từ hôm nay cột đó toàn NULL -> hỏng số liệu, không hỏng job.
+  ĐỔI KIỂU  -> GÃY. Không hợp nhất được double với string.
+               (int -> long thì merge được; double -> string thì KHÔNG.
+                Quy luật: Spark chỉ merge được khi có kiểu 'rộng hơn' chứa được cả hai.)
+  ĐỔI TÊN cột = BỎ cột cũ + THÊM cột mới -> dữ liệu cũ mất tăm dưới tên mới. Câm lặng.
+
+=> ĐÂY LÀ CHỖ ICEBERG (module 5) SINH RA ĐỂ CỨU:
+   - schema nằm trong METADATA CỦA BẢNG, không phải suy ra từ file nào đó ngẫu nhiên
+     -> đọc mặc định không còn là trò may rủi.
+   - mỗi cột có FIELD ID -> đổi tên cột là thao tác metadata, dữ liệu cũ vẫn đọc được.
+   - ALTER TABLE có kiểm tra tương thích -> append lệch kiểu bị CHẶN NGAY LÚC GHI,
+     không thành bom nổ chậm.

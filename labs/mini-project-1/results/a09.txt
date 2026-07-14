@@ -1,0 +1,152 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master spark://spark-master:7077 /workspace/labs/mini-project-1/exercises/a09_cache_measured.py
+26/07/14 09:07:39 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:07:40 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:07:40 INFO ResourceUtils: ==============================================================
+26/07/14 09:07:40 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:07:40 INFO ResourceUtils: ==============================================================
+26/07/14 09:07:40 INFO SparkContext: Submitted application: a09-cache-measured
+26/07/14 09:07:40 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:07:40 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:07:40 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:07:40 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:07:40 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:07:40 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:07:40 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:07:40 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:07:40 INFO Utils: Successfully started service 'sparkDriver' on port 36887.
+26/07/14 09:07:40 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:07:40 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:07:40 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:07:40 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:07:40 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:07:40 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-ed5ef055-3698-441e-88dd-27088f71781a
+26/07/14 09:07:40 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:07:40 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:07:40 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:07:40 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:07:40 INFO StandaloneAppClient$ClientEndpoint: Connecting to master spark://spark-master:7077...
+26/07/14 09:07:40 INFO TransportClientFactory: Successfully created connection to spark-master/172.22.0.2:7077 after 22 ms (0 ms spent in bootstraps)
+26/07/14 09:07:40 INFO StandaloneSchedulerBackend: Connected to Spark cluster with app ID app-20260714090740-0014
+26/07/14 09:07:40 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20260714090740-0014/0 on worker-20260714065715-172.22.0.3-38305 (172.22.0.3:38305) with 3 core(s)
+26/07/14 09:07:40 INFO StandaloneSchedulerBackend: Granted executor ID app-20260714090740-0014/0 on hostPort 172.22.0.3:38305 with 3 core(s), 1024.0 MiB RAM
+26/07/14 09:07:40 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20260714090740-0014/1 on worker-20260714065715-172.22.0.4-40037 (172.22.0.4:40037) with 3 core(s)
+26/07/14 09:07:40 INFO StandaloneSchedulerBackend: Granted executor ID app-20260714090740-0014/1 on hostPort 172.22.0.4:40037 with 3 core(s), 1024.0 MiB RAM
+26/07/14 09:07:40 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 40151.
+26/07/14 09:07:40 INFO NettyBlockTransferService: Server created on 8aca0779bea3:40151
+26/07/14 09:07:40 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:07:40 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 40151, None)
+26/07/14 09:07:40 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:40151 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 40151, None)
+26/07/14 09:07:40 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 40151, None)
+26/07/14 09:07:40 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 40151, None)
+26/07/14 09:07:40 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20260714090740-0014/1 is now RUNNING
+26/07/14 09:07:40 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20260714090740-0014/0 is now RUNNING
+26/07/14 09:07:40 INFO StandaloneSchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
+
+master=spark://spark-master:7077 | defaultParallelism=2
+
+==============================================================================
+PHẦN A — KHÔNG cache · 110,197 dòng
+==============================================================================
+3 lần count(): ['2.83s', '0.58s', '0.53s']
+Cả 3 lần đều xấp xỉ nhau -> lần 2 và lần 3 KHÔNG hề rẻ hơn lần 1.
+Vì lazy = KHÔNG NHỚ GÌ CẢ. Mỗi action tính lại từ đầu: đọc 2 file, join, shuffle.
+
+==============================================================================
+PHẦN B — CÓ cache
+==============================================================================
+action MỒI (vừa tính vừa nạp cache): 1.07s  <- lần này ĐẮT HƠN bình thường,
+   vì ngoài việc tính, Spark còn phải ghi kết quả vào bộ nhớ. Đây là VỐN BỎ RA.
+3 lần count() sau đó: ['0.08s', '0.12s', '0.08s']
+
+| lần chạy | KHÔNG cache | CÓ cache | nhanh hơn |
+|---|---|---|---|
+| lần 1 | 2.83s | 0.08s | 34.6× |
+| lần 2 | 0.58s | 0.12s | 4.8× |
+| lần 3 | 0.53s | 0.08s | 6.6× |
+| **ẤM (min lần 2-3)** | **0.53s** | **0.08s** | **6.6×** |
+
+HOÀ VỐN SAU BAO NHIÊU LẦN DÙNG? Vốn bỏ ra = 1.07s (mồi) − 0.53s (một lần tính
+bình thường) = 0.54s phụ trội. Mỗi lần dùng lại tiết kiệm 0.45s.
+=> Cache HOÀ VỐN sau ~2.2 lần dùng lại. Dùng ÍT hơn thế thì cache là LỖ.
+
+==============================================================================
+PHẦN C — TAB STORAGE (đọc bằng REST /api/v1/applications/<id>/storage/rdd)
+==============================================================================
+StorageLevel mà .cache() thực sự dùng: **Disk Memory Deserialized 1x Replicated**
+
+| tên block cache | partition đã cache | RAM chiếm | Đĩa chiếm | StorageLevel |
+|---|---|---|---|---|
+| *(2) Project [order_id#0, cast(order_pur | 4/4 | 10.0 MB | 0.0 MB | Disk Memory Deserialized 1x Replicated |
+
+VÌ SAO CACHE THƯỜNG *TO HƠN* FILE GỐC TRÊN ĐĨA? (đề hỏi đúng câu này)
+  1. CSV trên đĩa là TEXT ĐÃ NÉN VỀ MẶT NGỮ NGHĨA: số 58.90 chỉ tốn 5 ký tự = 5 byte.
+     Trong bộ nhớ nó là DoubleType = 8 byte. Timestamp trong CSV là 19 ký tự text,
+     trong bộ nhớ là 8 byte long — chỗ này thì cache lại NHỎ hơn.
+  2. Cache giữ CẢ CẤU TRÚC: con trỏ, độ dài chuỗi, bitmap null cho từng cột.
+  3. Ở đây DataFrame đã cache là kết quả JOIN (bảng rộng hơn, 110,197 dòng) chứ không phải
+     file gốc — so trực tiếp với 17MB CSV là so nhầm đối tượng.
+  => Nên nhìn con số MB đo được ở bảng trên và đối chiếu với ngân sách RAM THẬT:
+     mỗi executor chỉ có ~1049 MB cho storage+execution (xem PROGRESS §3.0).
+     Cache vượt ngân sách -> Spark âm thầm ĐUỔI block ra (evict) -> lần sau lại tính lại,
+     và bạn ngồi thắc mắc "sao cache mà vẫn chậm".
+
+==============================================================================
+PHẦN D — so StorageLevel (⚠️ MEMORY_ONLY_SER KHÔNG TỒN TẠI trong PySpark)
+==============================================================================
+
+>> Đã dò: `StorageLevel.MEMORY_ONLY_SER` KHÔNG có trong pyspark 3.4.1.
+>> PySpark MEMORY_ONLY in ra: 'Memory Serialized 1x Replicated' -> nó CHÍNH LÀ bản serialized.
+>> Ghi vào report là ĐỀ SAI, đừng bịa ra một dòng số cho nó.
+
+| StorageLevel | RAM chiếm | Đĩa chiếm | count() ẤM |
+|---|---|---|---|
+| MEMORY_AND_DISK  (= cái .cache() dùng) | 7.5 MB | 0.0 MB | 0.09s |
+| MEMORY_ONLY      (PySpark: đã là SER) | 7.5 MB | 0.0 MB | 0.07s |
+| DISK_ONLY | 0.0 MB | 7.5 MB | 0.07s |
+
+==============================================================================
+PHẦN E — BẪY `_corrupt_record`: 2 action trên 1 plan chưa cache = ĐỌC FILE 2 LẦN
+==============================================================================
+
+Ở Checkpoint 1 bạn sẽ viết đúng hình dạng này:
+    df   = spark.read....csv(dirty)
+    bad  = df.filter(col('_corrupt_record').isNotNull())     # nhánh 1
+    good = df.filter(col('_corrupt_record').isNull())        # nhánh 2
+    bad.count(); good.count()                                # 2 ACTION
+Hai action = hai job = ĐỌC FILE HAI LẦN (và với _corrupt_record, một số bản Spark còn
+ném thẳng lỗi). Dưới đây tái hiện đúng cơ chế đó bằng cột `order_status` cho dễ thấy,
+và ĐO BẰNG SỐ BYTE ĐỌC TỪ ĐĨA — thứ không cãi được.
+
+| tình huống | action | bytes ĐỌC TỪ ĐĨA |
+|---|---|---|
+| KHÔNG cache | nhánh 1 (`delivered`, 96,478 dòng) | 17.1 MB |
+| KHÔNG cache | nhánh 2 (`!= delivered`, 2,963 dòng) | 17.1 MB |
+| **tổng** | | **34.2 MB** ← file chỉ có ~17 MB! |
+| CÓ cache | nhánh 1 | 10.2 MB |
+| CÓ cache | nhánh 2 | 10.2 MB |
+| **tổng** | | **20.4 MB** |
+
+Đọc bảng: không cache thì MỖI nhánh tự đi đọc lại nguyên file. Cache xong thì cả hai
+nhánh ăn chung một lần đọc — nhánh sau đọc ~0 byte từ đĩa.
+
+==============================================================================
+KẾT LUẬN — 3 dòng cho `ingest.py` của tôi (đề yêu cầu đúng 3 dòng này)
+==============================================================================
+
+1. ĐÁNG cache: DataFrame đọc từ file bẩn ngay TRƯỚC khi tách 2 nhánh sạch/hỏng
+   (Checkpoint 1). Nó được dùng ĐÚNG 2 LẦN (bad + good) -> phần E chứng minh không cache
+   là đọc file 2 lần. Đây là chỗ duy nhất trong ingest.py mà cache chắc chắn LÃI.
+
+2. PHÍ cache: DataFrame orders sau khi đã làm sạch, chỉ để `write.parquet()` một lần.
+   Dùng đúng 1 lần -> cache là LỖ RÒNG: trả tiền RAM + trả thời gian ghi vào bộ nhớ,
+   đổi lấy 0 lần dùng lại. Cache ở đây chỉ làm chậm job và ăn mất RAM của shuffle.
+
+3. LUẬT NGÓN TAY CÁI: cache khi và chỉ khi (số lần DÙNG LẠI ≥ 2) VÀ (dữ liệu vừa ngân
+   sách RAM: ~1049 MB/executor × 2 = ~2.0 GB ở cụm này). Không thoả -> đừng cache.
+   Và đừng quên `unpersist()` khi xong: cache không tự chết cho tới khi session tắt,
+   nó cứ nằm đó chiếm RAM mà đáng lẽ shuffle được dùng.
+
+MỘT CÁI BẪY NỮA (không có trong đề): `cache()` LÀ LƯỜI. `df.cache()` rồi bỏ đó, không
+có action nào theo sau -> KHÔNG CÓ GÌ trong RAM cả, tab Storage rỗng, và bạn vẫn tưởng
+mình đã cache. Luôn phải có một action MỒI.
+

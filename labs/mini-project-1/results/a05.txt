@@ -1,0 +1,98 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master 'local[2]' /workspace/labs/mini-project-1/exercises/a05_lazy_clock.py
+26/07/14 09:03:07 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:03:07 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:03:07 INFO ResourceUtils: ==============================================================
+26/07/14 09:03:07 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:03:07 INFO ResourceUtils: ==============================================================
+26/07/14 09:03:07 INFO SparkContext: Submitted application: a05-lazy-clock
+26/07/14 09:03:07 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:03:07 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:03:07 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:03:07 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:03:07 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:03:07 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:03:07 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:03:07 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:03:07 INFO Utils: Successfully started service 'sparkDriver' on port 40893.
+26/07/14 09:03:07 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:03:07 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:03:07 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:03:07 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:03:07 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:03:07 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-67d5d614-0a01-43cc-afd6-f8ec90e4cd64
+26/07/14 09:03:07 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:03:07 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:03:08 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:03:08 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:03:08 INFO Executor: Starting executor ID driver on host 8aca0779bea3
+26/07/14 09:03:08 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/07/14 09:03:08 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 44691.
+26/07/14 09:03:08 INFO NettyBlockTransferService: Server created on 8aca0779bea3:44691
+26/07/14 09:03:08 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:03:08 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 44691, None)
+26/07/14 09:03:08 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:44691 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 44691, None)
+26/07/14 09:03:08 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 44691, None)
+26/07/14 09:03:08 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 44691, None)
+
+master = local[2] | defaultParallelism = 2
+
+==============================================================================
+PHẦN A — read (schema tường minh) / 10 transformation / count()
+==============================================================================
+
+| giai đoạn | thời gian | số job sinh ra | kết luận |
+|---|---|---|---|
+| `spark.read` (có schema) | 1.4364s | 0 | LƯỜI |
+| 10 transformation (có cả orderBy = shuffle) | 0.1739s | 0 | LƯỜI |
+| `count()` (ACTION) | 1.5717s | 2 | job chạy thật, 96,470 dòng |
+
+VÌ SAO t(transform) ~ 0 ? Vì 10 dòng đó chỉ dựng thêm 10 tầng vào cây plan
+nằm trong RAM của driver. 0 byte dữ liệu bị đụng tới, 0 task được phát đi.
+Cả cụm 6 core đứng nhìn. Chỉ khi count() gọi, domino mới đổ.
+
+==============================================================================
+PHẦN B — 3 cách đọc × 2 file. Đâu là ACTION TRÁ HÌNH?
+==============================================================================
+
+| file | cách đọc | t_read lần 1 (lạnh) | t_read ẤM (min lần 2-3) | job sinh ra mỗi lần đọc | numPartitions | lười? |
+|---|---|---|---|---|---|---|
+| orders 17MB | schema tường minh | 0.0183s | 0.0255s | [0, 0, 0] | 2 | ✅ LƯỜI |
+| orders 17MB | không schema, không infer (all String) | 0.2057s | 0.1149s | [1, 1, 1] | 2 | ❌ KHÔNG LƯỜI (1 job) |
+| orders 17MB | inferSchema=True | 0.5525s | 0.2130s | [2, 2, 2] | 2 | ❌ KHÔNG LƯỜI (2 job) |
+| geo 58MB | schema tường minh | 0.0115s | 0.0102s | [0, 0, 0] | 2 | ✅ LƯỜI |
+| geo 58MB | không schema, không infer (all String) | 0.1128s | 0.0778s | [1, 1, 1] | 2 | ❌ KHÔNG LƯỜI (1 job) |
+| geo 58MB | inferSchema=True | 0.9649s | 0.7878s | [2, 2, 2] | 2 | ❌ KHÔNG LƯỜI (2 job) |
+
+------------------------------------------------------------------------------
+BONUS — inferSchema không chỉ chậm, nó còn ĐOÁN SAI (bằng chứng cho A21):
+------------------------------------------------------------------------------
+
+| cột | inferSchema đoán | giá trị dòng đầu | schema tay | giá trị dòng đầu |
+|---|---|---|---|---|
+| geolocation_zip_code_prefix | int | `1037` | string | `01037` |
+
+File gốc ghi "01037". Nếu cột trên hiện 1037 thì inferSchema vừa ăn mất số 0
+đứng đầu — và không ai báo lỗi. Đây là DỮ LIỆU SAI IM LẶNG.
+
+==============================================================================
+CÂU TRẢ LỜI CHO CÂU HỎI CỦA ĐỀ: vì sao read với inferSchema tốn thời gian
+THẬT dù chưa có action nào?
+==============================================================================
+
+Vì để ĐOÁN được kiểu dữ liệu, Spark buộc phải NHÌN dữ liệu. Muốn nhìn dữ liệu thì
+phải đọc file. Muốn đọc file phân tán thì phải phát task. Phát task nghĩa là...
+CHẠY MỘT JOB. Nó chỉ không mang tên "action" thôi, chứ nó là action đúng nghĩa:
+có job, có stage, có task, có I/O thật, hiện lên Spark UI đàng hoàng.
+
+Nói cách khác: `inferSchema=True` phá vỡ lời hứa "read là transformation".
+Với `samplingRatio` mặc định = 1.0, nó quét TOÀN BỘ file — file càng to càng đắt
+(so cột "geo 58MB" với "orders 17MB" ở bảng phần B để thấy nó tỉ lệ với kích thước).
+
+Ba lý do bỏ inferSchema trong code production, xếp theo mức độ nguy hiểm TĂNG DẦN:
+  1. Chậm  — quét thừa toàn bộ dữ liệu một lượt trước khi làm việc thật.
+  2. Bất định — schema phụ thuộc DỮ LIỆU HÔM NAY. Mai file thiếu vài dòng là kiểu
+     cột đổi, pipeline gãy ở chỗ chẳng liên quan gì.
+  3. SAI IM LẶNG — "01037" thành 1037 (xem BONUS). Không exception, không cảnh báo,
+     chỉ có một cột zip code hỏng chảy thẳng vào bảng silver.
+Đó là lý do rubric trừ 10 điểm nếu thấy inferSchema trong code nộp.
+

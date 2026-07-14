@@ -1,0 +1,116 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master spark://spark-master:7077 /workspace/labs/mini-project-1/exercises/a07_rdd_vs_df.py
+26/07/14 09:04:54 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:04:54 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:04:54 INFO ResourceUtils: ==============================================================
+26/07/14 09:04:54 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:04:54 INFO ResourceUtils: ==============================================================
+26/07/14 09:04:54 INFO SparkContext: Submitted application: a07-rdd-vs-df
+26/07/14 09:04:54 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:04:54 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:04:54 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:04:54 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:04:54 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:04:54 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:04:54 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:04:54 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:04:55 INFO Utils: Successfully started service 'sparkDriver' on port 33851.
+26/07/14 09:04:55 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:04:55 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:04:55 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:04:55 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:04:55 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:04:55 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-7fc9afea-7a56-4337-ae49-f1d563fc2976
+26/07/14 09:04:55 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:04:55 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:04:55 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:04:55 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:04:55 INFO StandaloneAppClient$ClientEndpoint: Connecting to master spark://spark-master:7077...
+26/07/14 09:04:55 INFO TransportClientFactory: Successfully created connection to spark-master/172.22.0.2:7077 after 18 ms (0 ms spent in bootstraps)
+26/07/14 09:04:55 INFO StandaloneSchedulerBackend: Connected to Spark cluster with app ID app-20260714090455-0013
+26/07/14 09:04:55 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20260714090455-0013/0 on worker-20260714065715-172.22.0.3-38305 (172.22.0.3:38305) with 3 core(s)
+26/07/14 09:04:55 INFO StandaloneSchedulerBackend: Granted executor ID app-20260714090455-0013/0 on hostPort 172.22.0.3:38305 with 3 core(s), 1024.0 MiB RAM
+26/07/14 09:04:55 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20260714090455-0013/1 on worker-20260714065715-172.22.0.4-40037 (172.22.0.4:40037) with 3 core(s)
+26/07/14 09:04:55 INFO StandaloneSchedulerBackend: Granted executor ID app-20260714090455-0013/1 on hostPort 172.22.0.4:40037 with 3 core(s), 1024.0 MiB RAM
+26/07/14 09:04:55 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 46409.
+26/07/14 09:04:55 INFO NettyBlockTransferService: Server created on 8aca0779bea3:46409
+26/07/14 09:04:55 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:04:55 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 46409, None)
+26/07/14 09:04:55 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:46409 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 46409, None)
+26/07/14 09:04:55 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 46409, None)
+26/07/14 09:04:55 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 46409, None)
+26/07/14 09:04:55 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20260714090455-0013/0 is now RUNNING
+26/07/14 09:04:55 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20260714090455-0013/1 is now RUNNING
+26/07/14 09:04:55 INFO StandaloneSchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
+
+master=spark://spark-master:7077 | defaultParallelism=6 | dòng=99,441 | mồi cache=2.87s
+
+==============================================================================
+BẢNG SỐ ĐO — đếm đơn theo order_status (99,441 dòng, nguồn đã cache)
+==============================================================================
+
+| cách viết | lần 1 (lạnh) | lần 2 | lần 3 | ẤM (min 2-3) | so với DataFrame |
+|---|---|---|---|---|---|
+| (a) `df.groupBy().count()` | 0.721s | 0.385s | 0.173s | **0.173s** | 1.0× |
+| (b) `df.rdd.map().reduceByKey()` | 1.282s | 0.484s | 0.518s | **0.484s** | 2.8× |
+| (c) `spark.sql(...)` | 0.204s | 0.239s | 0.143s | **0.143s** | 0.8× |
+
+3 cách có ra CÙNG một kết quả không? **CÓ**
+Kết quả (sắp xếp): [('delivered', 96478), ('shipped', 1107), ('canceled', 625), ('unavailable', 609), ('invoiced', 314), ('processing', 301), ('created', 5), ('approved', 2)]
+
+==============================================================================
+(a) DataFrame API vs (c) SQL — CÙNG MỘT PLAN?
+==============================================================================
+
+--- Optimized Logical Plan của (a) DataFrame ---
+Aggregate [order_status#2], [order_status#2, count(1) AS count#1707L]
++- Project [order_status#2]
+   +- InMemoryRelation [order_id#0, customer_id#1, order_status#2, order_purchase_timestamp#3, order_approved_at#4, order_delivered_carrier_date#5, order_delivered_customer_date#6, order_estimated_delivery_date#7], StorageLevel(disk, memory, deserialized, 1 replicas)
+         +- FileScan csv [order_id#0,customer_id#1,order_status#2,order_purchase_timestamp#3,order_approved_at#4,order_delivered_carrier_date#5,order_delivered_customer_date#6,order_estimated_delivery_date#7] Batched: false, DataFilters: [], Format: CSV, Location: InMemoryFileIndex(1 paths)[file:/workspace/data/olist/olist_orders_dataset.csv], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<order_id:string,customer_id:string,order_status:string,order_purchase_timestamp:timestamp,...
+
+
+--- Optimized Logical Plan của (c) SQL ---
+Aggregate [order_status#2], [order_status#2, count(1) AS n#1790L]
++- Project [order_status#2]
+   +- InMemoryRelation [order_id#0, customer_id#1, order_status#2, order_purchase_timestamp#3, order_approved_at#4, order_delivered_carrier_date#5, order_delivered_customer_date#6, order_estimated_delivery_date#7], StorageLevel(disk, memory, deserialized, 1 replicas)
+         +- FileScan csv [order_id#0,customer_id#1,order_status#2,order_purchase_timestamp#3,order_approved_at#4,order_delivered_carrier_date#5,order_delivered_customer_date#6,order_estimated_delivery_date#7] Batched: false, DataFilters: [], Format: CSV, Location: InMemoryFileIndex(1 paths)[file:/workspace/data/olist/olist_orders_dataset.csv], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<order_id:string,customer_id:string,order_status:string,order_purchase_timestamp:timestamp,...
+
+
+=> Sau khi chuẩn hoá tên cột + id: **GIỐNG HỆT**
+
+VÌ SAO (a) và (c) giống nhau? Vì cả hai đều đi qua ĐÚNG MỘT cửa: Catalyst.
+DataFrame API và SQL chỉ là hai cách GÕ ra cùng một cây logical plan. Từ chỗ đó trở
+đi chúng là một. Nên "SQL nhanh hơn DataFrame" (hay ngược lại) là chuyện hoang đường —
+chọn cái nào là chuyện dễ đọc, không phải chuyện tốc độ.
+
+==============================================================================
+VÌ SAO (b) RDD CHẬM HƠN — 5 câu, đủ từ khoá đề yêu cầu
+==============================================================================
+
+1. SERIALIZE SANG PYTHON WORKER. `df.rdd.map(lambda...)` bắt TỪNG DÒNG trong 99.441
+   dòng phải: đóng gói từ UnsafeRow (nhị phân, trong JVM) -> pickle -> đẩy qua socket
+   sang tiến trình `python3` -> chạy lambda -> pickle ngược -> trả về JVM. Trả phí
+   "hải quan" hai chiều trên MỖI DÒNG. DataFrame không hề rời JVM một bước nào.
+
+2. CATALYST KHÔNG NHÌN THẤY LAMBDA. Với `F.col("order_status")` Spark đọc hiểu được
+   "à, nó cần đúng 1 cột" -> chỉ đọc 1 cột (column pruning). Với `lambda r: (r.order_status, 1)`
+   Spark chỉ thấy một hộp đen -> buộc phải dựng ĐỦ CẢ 8 CỘT của mỗi Row rồi mới đưa
+   sang Python. Đọc thừa 7 cột × 99.441 dòng, chỉ để vứt đi.
+
+3. MẤT WHOLE-STAGE CODEGEN. Với DataFrame, Tungsten SINH RA một class Java riêng cho
+   query này, gộp scan+filter+aggregate thành một vòng lặp chặt chạy sát phần cứng
+   (dấu `*` trước node trong explain là nó đấy). RDD thì chạy qua các lớp trừu tượng
+   iterator lồng nhau — mỗi dòng là vài lời gọi hàm ảo.
+
+4. MẤT TUNGSTEN MEMORY FORMAT. RDD giữ dữ liệu dạng object JVM/Python -> tốn RAM gấp
+   nhiều lần, GC phải làm việc. DataFrame giữ dạng nhị phân off-heap gọn hơn.
+
+5. MẤT LUÔN TAB SQL. Mở Spark UI: job của (b) KHÔNG xuất hiện ở tab SQL/DataFrame —
+   bằng chứng trực quan rằng RDD sống NGOÀI vòng pháp luật của Catalyst. Không có plan
+   để mà tối ưu, không có metric để mà nhìn.
+
+=> LUẬT NGHỀ: trong PySpark, DataFrame là MẶC ĐỊNH, RDD là NGOẠI LỆ PHẢI GIẢI TRÌNH.
+   Thấy `df.rdd.map(...)` trong code review, câu hỏi đầu tiên luôn là: "hàm built-in
+   nào trong pyspark.sql.functions làm được việc này?" — 9/10 lần là có.
+   (Ngoại lệ hợp lệ duy nhất ở project này: `df.rdd.glom().map(len)` để SOI partition —
+   bài A19. Nó chỉ trả về vài con số, không phải dữ liệu.)
+

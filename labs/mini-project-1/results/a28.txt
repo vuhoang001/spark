@@ -1,0 +1,103 @@
+==============================================================================
+A28 — 8 câu SQL mà Spark SẼ sinh ra
+partitionColumn=order_sk  lowerBound=1  upperBound=100000  numPartitions=8
+==============================================================================
+
+stride = 100000//8 - 1//8 = 12500 - 0 = 12500
+
+| task | câu SQL Spark gửi xuống DB (mỗi task = 1 connection riêng) |
+|---|---|
+| 0 | `SELECT ... FROM public.orders WHERE order_sk < 12501 or order_sk is null` |
+| 1 | `SELECT ... FROM public.orders WHERE order_sk >= 12501 AND order_sk < 25001` |
+| 2 | `SELECT ... FROM public.orders WHERE order_sk >= 25001 AND order_sk < 37501` |
+| 3 | `SELECT ... FROM public.orders WHERE order_sk >= 37501 AND order_sk < 50001` |
+| 4 | `SELECT ... FROM public.orders WHERE order_sk >= 50001 AND order_sk < 62501` |
+| 5 | `SELECT ... FROM public.orders WHERE order_sk >= 62501 AND order_sk < 75001` |
+| 6 | `SELECT ... FROM public.orders WHERE order_sk >= 75001 AND order_sk < 87501` |
+| 7 | `SELECT ... FROM public.orders WHERE order_sk >= 87501` |
+
+ĐỌC KỸ task 0 và task 7 — đó là 2 chỗ duy nhất KHÔNG đối xứng:
+  task 0: `order_sk < 12501 or order_sk is null`   <- gánh luôn mọi dòng NULL và mọi dòng < 1
+  task 7: `order_sk >= 87501`            <- gánh mọi dòng >= 100000 (không có cận trên!)
+
+==============================================================================
+(a) KHÔNG có partitionColumn thì sao?
+==============================================================================
+
+    df = spark.read.jdbc(url, "public.orders", properties=props)
+    df.rdd.getNumPartitions()   ->  1     (KHÔNG cần chạy cũng biết: Spark
+                                           không có căn cứ nào để cắt dải)
+
+    1 partition = 1 task = 1 connection = 1 core làm việc, 5 core kia ngồi chơi.
+    Bảng 50 triệu dòng: một luồng TCP kéo về, rồi TOÀN BỘ đi qua 1 executor.
+    Và tệ hơn: 1 partition đó phải VỪA RAM của executor đó. Không vừa -> OOM/spill.
+
+    => Số partition khi đọc JDBC KHÔNG do dữ liệu quyết định (khác hẳn đọc file,
+       nơi maxPartitionBytes chia file hộ bạn). Đọc JDBC, BẠN phải tự chia.
+==============================================================================
+(b) CÓ đủ 4 option -> 8 partition -> 8 connection SONG SONG
+==============================================================================
+
+    df = (spark.read.format("jdbc")
+          .option("url", "jdbc:postgresql://postgres:5432/olist")
+          .option("dbtable", "public.orders")
+          .option("user", "postgres").option("password", "***")
+          .option("partitionColumn", "order_sk")   # PHẢI là numeric/date/timestamp
+          .option("lowerBound", "1")
+          .option("upperBound", "100000")
+          .option("numPartitions", "8")
+          .load())
+    df.rdd.getNumPartitions()   ->  8
+
+    Cách NHÌN THẤY 8 câu SELECT đó nếu có Postgres thật:
+        ALTER SYSTEM SET log_statement = 'all';   SELECT pg_reload_conf();
+        docker logs -f <postgres_container> | grep 'order_sk'
+    Bốn option này là MỘT GÓI: thiếu 1 trong 4 -> Spark im lặng quay về 1 partition.
+    Không cảnh báo. Bạn chỉ biết khi nhìn getNumPartitions().
+==============================================================================
+(c) CÂU ĐỀ HỎI: nếu partitionColumn LỆCH thì chuyện gì xảy ra?
+==============================================================================
+
+    Giả định (đúng với mọi bảng của công ty đang tăng trưởng):
+      - order_sk chạy 1..100000 (đều về GIÁ TRỊ)
+      - nhưng 9,000,000 / 10,000,000 dòng (90%) có order_sk >= 90,000
+        (shop bán chạy dần, đơn mới dồn về cuối dải id)
+
+    Spark cắt dải theo GIÁ TRỊ của cột, KHÔNG theo SỐ DÒNG — nó không biết đếm
+    phân bố, và nó cũng không hỏi database. Kết quả:
+
+| task | dải order_sk | số dòng ước tính | ghi chú |
+|---|---|---|---|
+| 0 | [1 .. 12501) | ~142,857 | nhàn |
+| 1 | [12,501 .. 25001) | ~142,857 | nhàn |
+| 2 | [25,001 .. 37501) | ~142,857 | nhàn |
+| 3 | [37,501 .. 50001) | ~142,857 | nhàn |
+| 4 | [50,001 .. 62501) | ~142,857 | nhàn |
+| 5 | [62,501 .. 75001) | ~142,857 | nhàn |
+| 6 | [75,001 .. 87501) | ~142,857 | nhàn |
+| 7 | [87,501 .. ∞) | ~9,000,000 | **ÔM 90% BẢNG — cả job chờ MỘT task này** |
+
+    Hậu quả cụ thể:
+      - 7 task xong trong vài giây rồi NGỒI CHƠI; 1 task cày 9,000,000 dòng.
+      - Thời gian job = thời gian của task chậm nhất, KHÔNG phải trung bình.
+        Song song 8 connection mà nhanh lên gần như 0% -> tưởng "Spark chậm",
+        thực ra là "tôi chia dải sai".
+      - Task đó phải nhét 9,000,000 dòng vào RAM 1 executor -> spill hoặc OOM.
+      - Trên Spark UI: Max/Median của Task Duration >> 3 -> dấu hiệu skew kinh điển.
+
+    CÁCH SỬA (theo thứ tự ưu tiên):
+      1. Chọn cột chia có phân bố ĐỀU VỀ SỐ DÒNG: hash(id) % N, hoặc một cột
+         surrogate rải đều. Không dùng id tăng dần của bảng đang tăng trưởng.
+      2. Chia theo NGÀY nếu dữ liệu đều theo ngày (partitionColumn kiểu date/timestamp
+         được Spark hỗ trợ) — thường đều hơn id nhiều.
+      3. Không có cột đều? Dùng `.option("query", ...)` đẩy hẳn SQL xuống DB,
+         hoặc để DB tự export ra file rồi Spark đọc file (nhiều lúc đây là câu trả lời đúng).
+
+    BA ĐIỀU KHÔNG BAO GIỜ QUÊN VỀ JDBC:
+      1. lowerBound/upperBound KHÔNG LỌC DỮ LIỆU. Chúng chỉ cắt dải. Dòng nằm ngoài
+         khoảng vẫn được đọc — rơi vào dải đầu (kèm NULL) hoặc dải cuối.
+      2. numPartitions = số CONNECTION ĐỒNG THỜI ĐẤM VÀO DATABASE. numPartitions=100
+         trên DB production = 100 connection = DBA đi tìm bạn. Đọc từ replica.
+      3. Thiếu 1 trong 4 option -> im lặng quay về 1 partition. Luôn kiểm bằng
+         df.rdd.getNumPartitions() ngay sau khi đọc.
+

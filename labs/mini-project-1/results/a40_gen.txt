@@ -1,0 +1,29 @@
+[make_big] đọc nguồn: /home/hoanggggf/Documents/data-engineering/spark-mastery/data/olist/olist_orders_dataset.csv
+[make_big]   99,441 dòng gốc
+[make_big]   cửa sổ ngày THẬT: 2016-09-04 .. 2018-10-17  (772 ngày)
+[make_big]   part-00000.csv : replica   0..4   |   497,205 dòng |   88.5 MB | 5s
+[make_big]   part-00001.csv : replica   5..9   |   497,205 dòng |   88.5 MB | 8s
+[make_big]   part-00002.csv : replica  10..14  |   497,205 dòng |   88.5 MB | 10s
+[make_big]   part-00003.csv : replica  15..19  |   497,205 dòng |   88.5 MB | 13s
+[make_big]   part-00004.csv : replica  20..24  |   497,205 dòng |   88.5 MB | 15s
+[make_big]   part-00005.csv : replica  25..29  |   497,205 dòng |   88.5 MB | 18s
+[make_big]   part-00006.csv : replica  30..34  |   497,205 dòng |   88.5 MB | 21s
+[make_big]   part-00007.csv : replica  35..39  |   497,205 dòng |   88.5 MB | 23s
+[make_big]   part-00008.csv : replica  40..44  |   497,205 dòng |   88.5 MB | 26s
+[make_big]   part-00009.csv : replica  45..49  |   497,205 dòng |   88.5 MB | 29s
+[make_big]   part-00010.csv : replica  50..54  |   497,205 dòng |   88.5 MB | 31s
+[make_big]   part-00011.csv : replica  55..59  |   497,205 dòng |   88.5 MB | 34s
+[make_big]   part-00012.csv : replica  60..64  |   497,205 dòng |   88.5 MB | 37s
+[make_big]   part-00013.csv : replica  65..69  |   497,205 dòng |   88.5 MB | 39s
+[make_big]   part-00014.csv : replica  70..74  |   497,205 dòng |   88.5 MB | 42s
+[make_big]   part-00015.csv : replica  75..79  |   497,205 dòng |   88.5 MB | 45s
+[make_big]   part-00016.csv : replica  80..84  |   497,205 dòng |   88.5 MB | 47s
+[make_big]   part-00017.csv : replica  85..89  |   497,205 dòng |   88.5 MB | 50s
+[make_big]   part-00018.csv : replica  90..94  |   497,205 dòng |   88.5 MB | 53s
+[make_big]   part-00019.csv : replica  95..99  |   497,205 dòng |   88.5 MB | 55s
+
+[make_big] XONG trong 55.3s
+[make_big]   thư mục   : /home/hoanggggf/Documents/data-engineering/spark-mastery/data/big/orders_100x
+[make_big]   số file   : 20
+[make_big]   số dòng   : 9,944,100 data ( = 99,441 × 100 ) + 20 header
+[make_big]   dung lượng: 1,770,507,420 bytes = 1.65 GB

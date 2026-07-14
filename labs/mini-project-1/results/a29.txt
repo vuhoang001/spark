@@ -1,0 +1,122 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master 'local[2]' /workspace/labs/mini-project-1/exercises/a29_lineage_input_file.py
+26/07/14 09:44:55 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:44:55 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:44:55 INFO ResourceUtils: ==============================================================
+26/07/14 09:44:55 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:44:55 INFO ResourceUtils: ==============================================================
+26/07/14 09:44:55 INFO SparkContext: Submitted application: a29-lineage
+26/07/14 09:44:55 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:44:55 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:44:55 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:44:56 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:44:56 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:44:56 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:44:56 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:44:56 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:44:56 INFO Utils: Successfully started service 'sparkDriver' on port 35921.
+26/07/14 09:44:56 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:44:56 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:44:56 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:44:56 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:44:56 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:44:56 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-4a48a817-e49e-41b0-b811-1ecd20cb1818
+26/07/14 09:44:56 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:44:56 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:44:56 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:44:56 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:44:56 INFO Executor: Starting executor ID driver on host 8aca0779bea3
+26/07/14 09:44:56 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/07/14 09:44:56 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 35333.
+26/07/14 09:44:56 INFO NettyBlockTransferService: Server created on 8aca0779bea3:35333
+26/07/14 09:44:56 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:44:56 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 35333, None)
+26/07/14 09:44:56 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:35333 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 35333, None)
+26/07/14 09:44:56 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 35333, None)
+26/07/14 09:44:56 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 35333, None)
+==============================================================================
+BỘ BỐN LINEAGE: source_file · ingest_ts · ingest_run_id · _corrupt_record
+==============================================================================
+Đọc 2 file trong 1 lệnh read -> tổng 101448 dòng.
+
+--- Phân bố dòng theo file nguồn (bằng chứng input_file_name hoạt động):
++-----------------------------------------------------+-----+
+|source_file                                          |count|
++-----------------------------------------------------+-----+
+|file:///workspace/data/dirty/orders_dirty.csv        |2007 |
+|file:///workspace/data/olist/olist_orders_dataset.csv|99441|
++-----------------------------------------------------+-----+
+
+--- 7 dòng hỏng. Mỗi dòng biết CHÍNH XÁC nó từ file nào ra:
++---------------------------------------------+--------------------------+-------------------+------------------------------------------------------------+
+|                                  source_file|                 ingest_ts|      ingest_run_id|                                             _corrupt_record|
++---------------------------------------------+--------------------------+-------------------+------------------------------------------------------------+
+|file:///workspace/data/dirty/orders_dirty.csv|2026-07-14 09:44:58.379451|local-1784022296443|dirty01missingcols,cust01,delivered,2018-07-02 10:00:00,2...|
+|file:///workspace/data/dirty/orders_dirty.csv|2026-07-14 09:44:58.379451|local-1784022296443|dirty02extracols,cust02,delivered,FIELD_LA_TU_DAU_RA,2018...|
+|file:///workspace/data/dirty/orders_dirty.csv|2026-07-14 09:44:58.379451|local-1784022296443|dirty03badtype,cust03,delivered,hom qua,2018-07-02 11:00:...|
+|file:///workspace/data/dirty/orders_dirty.csv|2026-07-14 09:44:58.379451|local-1784022296443|dirty04acomma,cust04a,Sao Paulo, SP,2018-07-02 10:00:00,2...|
+|file:///workspace/data/dirty/orders_dirty.csv|2026-07-14 09:44:58.379451|local-1784022296443|dirty04bcomma,cust04b,Sao Paulo, SP,2018-07-02 10:00:00,2...|
+|file:///workspace/data/dirty/orders_dirty.csv|2026-07-14 09:44:58.379451|local-1784022296443|dirty05badquote,"cust05,delivered,2018-07-02 10:00:00,201...|
+|file:///workspace/data/dirty/orders_dirty.csv|2026-07-14 09:44:58.379451|local-1784022296443|"order_id","customer_id","order_status","order_purchase_t...|
++---------------------------------------------+--------------------------+-------------------+------------------------------------------------------------+
+
+--- Đã ghi quarantine -> /workspace/data/output/quarantine/orders_a29 (7 dòng). Đọc lại 3 dòng:
+-RECORD 0-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ source_file     | file:///workspace/data/dirty/orders_dirty.csv                                                                                                            
+ ingest_ts       | 2026-07-14 09:44:58.379451                                                                                                                               
+ ingest_run_id   | local-1784022296443                                                                                                                                      
+ _corrupt_record | dirty01missingcols,cust01,delivered,2018-07-02 10:00:00,2018-07-02 11:00:00,2018-07-03 09:00:00                                                          
+-RECORD 1-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ source_file     | file:///workspace/data/dirty/orders_dirty.csv                                                                                                            
+ ingest_ts       | 2026-07-14 09:44:58.379451                                                                                                                               
+ ingest_run_id   | local-1784022296443                                                                                                                                      
+ _corrupt_record | dirty02extracols,cust02,delivered,FIELD_LA_TU_DAU_RA,2018-07-02 10:00:00,2018-07-02 11:00:00,2018-07-03 09:00:00,2018-07-10 00:00:00,2018-07-12 00:00:00 
+-RECORD 2-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ source_file     | file:///workspace/data/dirty/orders_dirty.csv                                                                                                            
+ ingest_ts       | 2026-07-14 09:44:58.379451                                                                                                                               
+ ingest_run_id   | local-1784022296443                                                                                                                                      
+ _corrupt_record | dirty03badtype,cust03,delivered,hom qua,2018-07-02 11:00:00,2018-07-03 09:00:00,2018-07-10 21:00:00,2018-07-12 00:00:00                                  
+only showing top 3 rows
+
+==============================================================================
+BẪY: thêm input_file_name() SAU khi đã shuffle thì được gì?
+==============================================================================
++------------+-----+----------------+
+|order_status|count|source_file_late|
++------------+-----+----------------+
+|shipped     |1133 |                |
+|canceled    |634  |                |
+|approved    |2    |                |
++------------+-----+----------------+
+only showing top 3 rows
+
+  Cột source_file_late rỗng ("") — vì sau groupBy, một dòng kết quả được
+  tổng hợp từ NHIỀU dòng của NHIỀU file. Không còn 'file nguồn' nào để trỏ tới.
+  => LUÔN thêm lineage NGAY SAU read, không bao giờ thêm sau.
+
+=========================================================================
+CÂU ĐỀ HỎI: cột nào trong bộ ba giúp bạn REPLAY được lỗi?
+=========================================================================
+  * `source_file`  — CỘT DUY NHẤT cho phép REPLAY.
+      Nó trả lời "chạy lại cái gì": mở đúng file đó, tìm đúng dòng đó, sửa nguồn,
+      chạy lại đúng file đó. Không có nó thì để tái hiện 1 dòng rác bạn phải chạy
+      lại TOÀN BỘ pipeline trên TOÀN BỘ nguồn — và cầu trời là lỗi vẫn còn ở đó.
+      (Ở data lake thật, đường dẫn có ngày: .../dt=2018-07-02/part-0003.csv
+       -> source_file đồng thời cho biết cả lô nào, giờ nào.)
+
+  * `ingest_ts`    — trả lời "LÚC NÀO tôi nuốt dòng này vào".
+      Dùng để: (a) khoanh vùng "mọi dòng rác xuất hiện sau 14:00 hôm qua"
+      -> khớp với lúc upstream đổi format; (b) tính tuổi dữ liệu (freshness SLA);
+      (c) dọn quarantine cũ. Nó KHÔNG replay được — nó là DẤU THỜI GIAN, không phải ĐỊA CHỈ.
+
+  * `_corrupt_record` — trả lời "dòng đó TRÔNG NHƯ THẾ NÀO".
+      Nguyên văn byte. Không có nó thì bạn biết file, biết giờ, mà không biết
+      dòng nào trong 99.441 dòng. Nó là TANG VẬT.
+
+  * `ingest_run_id` (tôi thêm, đề không yêu cầu) — applicationId của lần chạy.
+      Trả lời "lần chạy nào đẻ ra đống rác này" -> tra thẳng Spark UI / log của
+      app đó. Rẻ (1 dòng lit()), và là thứ đầu tiên bạn thèm khi debug lúc 3h sáng.
+
+  BỘ BA TỐI THIỂU = ĐỊA CHỈ (source_file) + THỜI GIAN (ingest_ts) + TANG VẬT (_corrupt_record).
+  Thiếu địa chỉ thì không replay. Thiếu thời gian thì không khoanh vùng. Thiếu tang
+  vật thì không biết mình đang tìm gì.
+

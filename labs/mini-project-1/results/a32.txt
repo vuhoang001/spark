@@ -1,0 +1,110 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master 'local[2]' /workspace/labs/mini-project-1/exercises/a32_sort_within_partitions.py
+26/07/14 09:52:47 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:52:47 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:52:47 INFO ResourceUtils: ==============================================================
+26/07/14 09:52:47 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:52:47 INFO ResourceUtils: ==============================================================
+26/07/14 09:52:47 INFO SparkContext: Submitted application: a32-sort-within-partitions
+26/07/14 09:52:47 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:52:47 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:52:47 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:52:47 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:52:47 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:52:47 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:52:47 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:52:47 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:52:47 INFO Utils: Successfully started service 'sparkDriver' on port 41591.
+26/07/14 09:52:47 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:52:47 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:52:47 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:52:47 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:52:47 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:52:48 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-35031866-75f1-43b7-ac9a-343228cff314
+26/07/14 09:52:48 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:52:48 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:52:48 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:52:48 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:52:48 INFO Executor: Starting executor ID driver on host 8aca0779bea3
+26/07/14 09:52:48 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/07/14 09:52:48 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 37093.
+26/07/14 09:52:48 INFO NettyBlockTransferService: Server created on 8aca0779bea3:37093
+26/07/14 09:52:48 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:52:48 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 37093, None)
+26/07/14 09:52:48 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:37093 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 37093, None)
+26/07/14 09:52:48 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 37093, None)
+26/07/14 09:52:48 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 37093, None)
+
+==============================================================================
+A32 — CHUẨN BỊ
+==============================================================================
+order_items: 112,650 dòng | price > 1500: 334 dòng (0.30% — đủ hiếm để skip có ý nghĩa)
+parquet.filterPushdown = true (phải là true, không thì reader không nhận được filter -> không skip được gì)
+
+  [unsorted / block 128MB (mặc định)] các lần chạy: 0.30s, 0.16s, 0.17s  -> lấy min(sau warmup) = 0.16s
+  [SORTED   / block 128MB (mặc định)] các lần chạy: 0.16s, 0.12s, 0.12s  -> lấy min(sau warmup) = 0.12s
+  [unsorted / block 512KB] các lần chạy: 0.12s, 0.14s, 0.11s  -> lấy min(sau warmup) = 0.11s
+  [SORTED   / block 512KB] các lần chạy: 0.12s, 0.10s, 0.10s  -> lấy min(sau warmup) = 0.10s
+
+==============================================================================
+BẢNG A32 — SORT vs KHÔNG SORT (query: price > 1500, action = count)
+==============================================================================
+| biến thể | file | row group | size trên đĩa | size of files read | input bytes | input bytes (số) | rows scanned (Scan nhả ra) | kết quả count | min lần 2-3 |
+|---|---|---|---|---|---|---|---|---|---|
+| unsorted / block 128MB (mặc định) | 1 | 1 | 6.5 MB | 6.5 MB | 353.9 KB | 362,372 | 112,650 | 334 | 0.16s |
+| SORTED   / block 128MB (mặc định) | 1 | 1 | 6.0 MB | 5.9 MB | 159.9 KB | 163,746 | 12,650 | 334 | 0.12s |
+| unsorted / block 512KB | 1 | 31 | 8.7 MB | 8.6 MB | 4.2 MB | 4,400,504 | 112,650 | 334 | 0.11s |
+| SORTED   / block 512KB | 1 | 31 | 6.8 MB | 6.7 MB | 198.3 KB | 203,023 | 3,480 | 334 | 0.10s |
+
+ĐỌC BẢNG:
+  - Cột 'kết quả count' PHẢI giống nhau cả 4 dòng (= 334). Khác nhau = code sai,
+    không phải phát hiện khoa học.
+  - So 2 dòng 'block 128MB': row group = 1 -> input bytes GẦN NHƯ Y HỆT dù đã sort.
+    Đó KHÔNG phải sort vô dụng — đó là 'không có gì để bỏ qua'. (bẫy ở docstring)
+  - So 2 dòng 'block 512KB': đây mới là thí nghiệm thật. sorted đọc ít byte hơn
+    và 'rows scanned' tụt mạnh -> reader đã BỎ QUA cả row group nhờ min/max.
+
+==============================================================================
+A32 — MIN/MAX CỦA TỪNG ROW GROUP (bằng chứng vật lý, đọc từ footer)
+==============================================================================
+
+unsorted / block 512KB — 31 row group. Số row group có max(price) > 1500 (tức PHẢI đọc): 31/31  -> lý thuyết bỏ qua được 0/31 row group
+   rg[ 0] rows= 3,639  min=     3.49  max=   6735.0  -> ĐỌC 
+   rg[ 1] rows= 3,639  min=     5.85  max=  2999.99  -> ĐỌC 
+   rg[ 2] rows= 3,639  min=      4.2  max=  2199.99  -> ĐỌC 
+   rg[ 3] rows= 3,639  min=     3.99  max=   4690.0  -> ĐỌC 
+   rg[ 4] rows= 3,639  min=     3.85  max=   2649.0  -> ĐỌC 
+   rg[ 5] rows= 3,639  min=     3.99  max=   2749.0  -> ĐỌC 
+   rg[ 6] rows= 3,639  min=      2.9  max=   3099.9  -> ĐỌC 
+   rg[ 7] rows= 3,639  min=     0.85  max=   3930.0  -> ĐỌC 
+   rg[ 8] rows= 3,639  min=     3.85  max=  4399.87  -> ĐỌC 
+   rg[ 9] rows= 3,639  min=      5.3  max=   2249.0  -> ĐỌC 
+   rg[10] rows= 3,639  min=     4.99  max=  3109.99  -> ĐỌC 
+   rg[11] rows= 3,639  min=      3.9  max=   2090.0  -> ĐỌC 
+   ... (19 row group nữa)
+
+SORTED   / block 512KB — 31 row group. Số row group có max(price) > 1500 (tức PHẢI đọc): 1/31  -> lý thuyết bỏ qua được 30/31 row group
+   rg[ 0] rows= 3,639  min=     0.85  max=     14.5  -> skip
+   rg[ 1] rows= 3,639  min=     14.5  max=     19.0  -> skip
+   rg[ 2] rows= 3,639  min=     19.0  max=    22.99  -> skip
+   rg[ 3] rows= 3,639  min=    22.99  max=     26.5  -> skip
+   rg[ 4] rows= 3,639  min=     26.5  max=     29.9  -> skip
+   rg[ 5] rows= 3,639  min=     29.9  max=     33.5  -> skip
+   rg[ 6] rows= 3,639  min=     33.5  max=    37.99  -> skip
+   rg[ 7] rows= 3,639  min=    37.99  max=    39.99  -> skip
+   rg[ 8] rows= 3,639  min=    39.99  max=     45.9  -> skip
+   rg[ 9] rows= 3,639  min=     45.9  max=     49.9  -> skip
+   rg[10] rows= 3,639  min=     49.9  max=     52.9  -> skip
+   rg[11] rows= 3,639  min=     52.9  max=     57.0  -> skip
+   ... (19 row group nữa)
+
+==============================================================================
+A32 — ĐÁNH ĐỔI PHẢI GHI VÀO REPORT
+==============================================================================
+Chỉ sort được theo MỘT chiều. Sort theo `price` = đánh cược rằng query hay lọc
+theo price. Nếu thực tế query lọc theo `product_id` hay `seller_id` thì công sort
+này VÔ ÍCH (min/max của product_id trong mỗi row group vẫn phủ toàn dải).
+Cái giá phải trả: sortWithinPartitions thêm 1 bước sort (CPU + spill) lúc GHI.
+=> Chỉ sort khi biết rõ query pattern. Ghi vào report: 'tôi sort theo ___ vì
+   query chính của downstream lọc theo ___'.
+Ghi chú: sort KHÔNG gây shuffle (sortWithinPartitions sort trong từng partition),
+khác orderBy() — cái đó shuffle toàn cục, đắt hơn nhiều.

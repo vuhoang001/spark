@@ -1,0 +1,26 @@
+BẰNG CHỨNG L4b — chạy bằng csv.reader của Python (cùng luật quote với univocity của Spark)
+file: data/dirty/orders_dirty.csv
+
+--- dòng 893 : dirty04acomma -> parser trả 9 field ---
+   order_id                         = 'dirty04acomma'
+   customer_id                      = 'cust04a'
+   order_status                     = 'Sao Paulo'
+   order_purchase_timestamp         = ' SP'
+   order_approved_at                = '2018-07-02 10:00:00'
+   order_delivered_carrier_date     = '2018-07-02 11:00:00'
+   order_delivered_customer_date    = '2018-07-03 09:00:00'
+   order_estimated_delivery_date    = '2018-07-10 21:00:00'
+   THỪA: ['2018-07-12 00:00:00']
+   => khác 8 field -> Spark BẮT ĐƯỢC (_corrupt_record) <=
+
+--- dòng 1116 : dirty04bcomma -> parser trả 8 field ---
+   order_id                         = 'dirty04bcomma'
+   customer_id                      = 'cust04b'
+   order_status                     = 'Sao Paulo'
+   order_purchase_timestamp         = ' SP'
+   order_approved_at                = '2018-07-02 10:00:00'
+   order_delivered_carrier_date     = '2018-07-02 11:00:00'
+   order_delivered_customer_date    = '2018-07-03 09:00:00'
+   order_estimated_delivery_date    = '2018-07-10 21:00:00'
+   => 8 field = ĐÚNG số cột -> KHÔNG có lỗi cấu trúc -> LỌT IM LẶNG <=
+

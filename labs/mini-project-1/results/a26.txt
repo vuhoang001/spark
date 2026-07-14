@@ -1,0 +1,101 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master 'local[2]' /workspace/labs/mini-project-1/exercises/a26_partition_overwrite_mode.py
+26/07/14 09:43:44 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:43:44 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:43:44 INFO ResourceUtils: ==============================================================
+26/07/14 09:43:44 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:43:44 INFO ResourceUtils: ==============================================================
+26/07/14 09:43:44 INFO SparkContext: Submitted application: a26-partition-overwrite
+26/07/14 09:43:44 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:43:44 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:43:44 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:43:44 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:43:44 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:43:44 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:43:44 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:43:44 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:43:44 INFO Utils: Successfully started service 'sparkDriver' on port 44195.
+26/07/14 09:43:44 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:43:44 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:43:44 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:43:44 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:43:44 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:43:44 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-82a9df1b-c6ce-47de-8364-16b1f5711834
+26/07/14 09:43:44 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:43:44 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:43:44 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:43:44 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:43:44 INFO Executor: Starting executor ID driver on host 8aca0779bea3
+26/07/14 09:43:44 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/07/14 09:43:44 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 45373.
+26/07/14 09:43:44 INFO NettyBlockTransferService: Server created on 8aca0779bea3:45373
+26/07/14 09:43:44 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:43:44 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 45373, None)
+26/07/14 09:43:44 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:45373 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 45373, None)
+26/07/14 09:43:44 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 45373, None)
+26/07/14 09:43:44 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 45373, None)
+Nguồn: 99441 đơn có order_date; ngày 2018-07-02 có 195 đơn.
+
+==============================================================================
+THÍ NGHIỆM 1 — partitionOverwriteMode = static  (MẶC ĐỊNH của Spark)
+==============================================================================
+  conf hiện tại = static
+  [TRƯỚC khi re-run 1 ngày] thư mục partition =  634 | file part-* =  634 | tổng dòng =  99441 | dòng ngày 2018-07-02 = 195
+
+  >>> Giờ 'chạy lại đúng ngày 2018-07-02' — đúng câu lệnh mà 99% người sẽ viết:
+      one_day.write.mode('overwrite').partitionBy('order_date').parquet(TABLE)
+  [SAU khi re-run 1 ngày ] thư mục partition =    1 | file part-* =    2 | tổng dòng =    195 | dòng ngày 2018-07-02 = 195
+
+  KẾT QUẢ: 634 thư mục -> 1 thư mục. 99441 dòng -> 195 dòng.
+  Không exception. Không cảnh báo. Job báo SUCCESS.
+  VÌ SAO: 'static' nghĩa là phạm vi ghi đè được xác định bởi ĐƯỜNG DẪN bạn ghi,
+  chứ không phải bởi DỮ LIỆU bạn ghi. Bạn ghi vào TABLE -> Spark xoá TABLE.
+  Nó làm đúng thứ bạn BẢO nó làm, chỉ là không phải thứ bạn NGHĨ.
+
+==============================================================================
+THÍ NGHIỆM 2 — partitionOverwriteMode = dynamic
+==============================================================================
+  conf hiện tại = dynamic
+  [TRƯỚC khi re-run 1 ngày] thư mục partition =  634 | file part-* =  634 | tổng dòng =  99441 | dòng ngày 2018-07-02 = 195
+
+  >>> Cùng CHÍNH XÁC câu lệnh đó, chỉ khác 1 dòng conf:
+  [SAU khi re-run 1 ngày ] thư mục partition =  634 | file part-* =  635 | tổng dòng =  99441 | dòng ngày 2018-07-02 = 195
+
+  KẾT QUẢ: 634 thư mục -> 634 thư mục. 99441 dòng -> 99441 dòng.
+
+==============================================================================
+THÍ NGHIỆM 3 — dynamic chạy lại 2 lần nữa: có nhân đôi dòng của ngày đó không?
+==============================================================================
+  [sau lần re-run thứ 2   ] thư mục partition =  634 | file part-* =  635 | tổng dòng =  99441 | dòng ngày 2018-07-02 = 195
+  [sau lần re-run thứ 3   ] thư mục partition =  634 | file part-* =  635 | tổng dòng =  99441 | dòng ngày 2018-07-02 = 195
+  (3 dòng trên phải giống hệt nhau. Khác = pipeline không idempotent.)
+
+==============================================================================
+BẢNG (dán vào PROGRESS §3.6 'partitionOverwriteMode')
+==============================================================================
+
+| | Số thư mục partition TRƯỚC | SAU khi ghi đè 1 ngày | Tổng dòng TRƯỚC | Tổng dòng SAU |
+|---|---|---|---|---|
+| `static` *(mặc định!)* | 634 | **1** | 99441 | **195** |
+| `dynamic` | 634 | **634** | 99441 | **99441** |
+
+CÂU IN HOA MÀ TÔI SẼ KHÔNG BAO GIỜ QUÊN:
+
+    OVERWRITE MẶC ĐỊNH (static) KHÔNG GHI ĐÈ PARTITION — NÓ GHI ĐÈ CẢ BẢNG.
+    CHẠY LẠI MỘT NGÀY BẰNG static = XOÁ 633 THƯ MỤC VÀ 99246 DÒNG DỮ LIỆU,
+    JOB VẪN BÁO SUCCESS.
+
+Ba điều rút ra:
+1. 'static' phạm vi ghi đè = ĐƯỜNG DẪN. 'dynamic' phạm vi ghi đè = CÁC PARTITION
+   CÓ MẶT TRONG DATAFRAME. Một chữ conf, hai vũ trụ khác nhau.
+2. Vì sao Spark để static làm mặc định? Vì static là ngữ nghĩa "ghi đè" của
+   filesystem thuần (xoá thư mục, ghi lại) — nó có TRƯỚC khi có khái niệm partition.
+   Đây là nợ lịch sử, không phải thiết kế. Biết vậy để đừng tin vào mặc định.
+3. dynamic ĐÃ đủ để idempotent (thí nghiệm 3 chứng minh: re-run 3 lần, số không đổi),
+   NHƯNG nó chỉ ghi đè partition CÓ trong DataFrame. Nếu một ngày biến mất khỏi
+   nguồn (dữ liệu bị rút lại), dynamic sẽ KHÔNG xoá partition cũ đó — dữ liệu ma
+   nằm lại. Muốn xử lý cả trường hợp đó thì cần bảng có transaction: Delta/Iceberg
+   (module 5). Ghi nhận: đây là giới hạn tôi CHƯA giải quyết được ở module 1.
+
+=> src/ingest.py PHẢI có dòng này, và phải có nó TRƯỚC mọi lệnh write:
+   spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
+

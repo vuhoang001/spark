@@ -1,0 +1,111 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master spark://spark-master:7077 /workspace/labs/mini-project-1/exercises/a14_aqe_on_off.py
+26/07/14 09:15:02 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:15:02 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:15:02 INFO ResourceUtils: ==============================================================
+26/07/14 09:15:02 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:15:02 INFO ResourceUtils: ==============================================================
+26/07/14 09:15:02 INFO SparkContext: Submitted application: a14-aqe-on-off
+26/07/14 09:15:02 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:15:02 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:15:02 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:15:02 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:15:02 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:15:02 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:15:02 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:15:02 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:15:02 INFO Utils: Successfully started service 'sparkDriver' on port 42073.
+26/07/14 09:15:02 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:15:02 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:15:02 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:15:02 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:15:02 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:15:02 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-479ecea2-7faa-42cd-b365-29ba1c55fb9b
+26/07/14 09:15:02 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:15:02 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:15:02 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:15:02 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:15:02 INFO StandaloneAppClient$ClientEndpoint: Connecting to master spark://spark-master:7077...
+26/07/14 09:15:02 INFO TransportClientFactory: Successfully created connection to spark-master/172.22.0.2:7077 after 21 ms (0 ms spent in bootstraps)
+26/07/14 09:15:02 INFO StandaloneSchedulerBackend: Connected to Spark cluster with app ID app-20260714091502-0020
+26/07/14 09:15:02 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20260714091502-0020/0 on worker-20260714065715-172.22.0.3-38305 (172.22.0.3:38305) with 3 core(s)
+26/07/14 09:15:02 INFO StandaloneSchedulerBackend: Granted executor ID app-20260714091502-0020/0 on hostPort 172.22.0.3:38305 with 3 core(s), 1024.0 MiB RAM
+26/07/14 09:15:02 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20260714091502-0020/1 on worker-20260714065715-172.22.0.4-40037 (172.22.0.4:40037) with 3 core(s)
+26/07/14 09:15:02 INFO StandaloneSchedulerBackend: Granted executor ID app-20260714091502-0020/1 on hostPort 172.22.0.4:40037 with 3 core(s), 1024.0 MiB RAM
+26/07/14 09:15:02 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 45999.
+26/07/14 09:15:02 INFO NettyBlockTransferService: Server created on 8aca0779bea3:45999
+26/07/14 09:15:02 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:15:02 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 45999, None)
+26/07/14 09:15:02 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:45999 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 45999, None)
+26/07/14 09:15:02 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 45999, None)
+26/07/14 09:15:02 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 45999, None)
+26/07/14 09:15:02 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20260714091502-0020/0 is now RUNNING
+26/07/14 09:15:02 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20260714091502-0020/1 is now RUNNING
+26/07/14 09:15:02 INFO StandaloneSchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
+
+====================================================================================================
+A14 — AQE ON/OFF  (groupBy order_status: ~8 nhóm, shuffle.partitions=200)
+====================================================================================================
+master=spark://spark-master:7077 | defaultParallelism=6 | Spark UI: http://8aca0779bea3:4040
+
+----------------------------------------------------------------------------------------------------
+>>> AQE-OFF | wall 3 lần: 4028, 1133, 695 ms | ẤM (min lần 2-3): 695 ms
+----------------------------------------------------------------------------------------------------
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 5 | COMPLETE | collect at /workspace/labs/mini-project-1/exercises/a14_aqe_on_off.py:111 | 5 | 99,441 | 2,557 B / 34 rec | 0 B / 0 rec |
+  | 6 | COMPLETE | collect at /workspace/labs/mini-project-1/exercises/a14_aqe_on_off.py:111 | 200 | 0 | 0 B / 0 rec | 2,557 B / 34 rec |
+
+----------------------------------------------------------------------------------------------------
+>>> AQE-ON | wall 3 lần: 217, 162, 157 ms | ẤM (min lần 2-3): 157 ms
+----------------------------------------------------------------------------------------------------
+  | stage | trạng thái | tên (operator cuối) | task | input rec | shuffle WRITE | shuffle READ |
+  |---|---|---|---|---|---|---|
+  | 13 | COMPLETE | collect at /workspace/labs/mini-project-1/exercises/a14_aqe_on_off.py:111 | 5 | 99,441 | 2,557 B / 34 rec | 0 B / 0 rec |
+  | 14 | SKIPPED | collect at /workspace/labs/mini-project-1/exercises/a14_aqe_on_off.py:111 | 5 | 0 | 0 B / 0 rec | 0 B / 0 rec |
+  | 15 | COMPLETE | collect at /workspace/labs/mini-project-1/exercises/a14_aqe_on_off.py:111 | 1 | 0 | 0 B / 0 rec | 2,557 B / 34 rec |
+
+====================================================================================================
+BẢNG DÁN VÀO PROGRESS.md §3.3 (phần shuffle.partitions)
+====================================================================================================
+
+| Giá trị | Số task sau shuffle | Số task xử lý **0 record** | Thời gian (ấm) | 🎯 |
+|---|---|---|---|---|
+| 200 *(mặc định, AQE off)* | 200 | 192 / 200 task lấy được | 695 ms | *lãng phí* |
+| 200 + **AQE on** | 1 | 0 / 1 task lấy được | 157 ms | ← AQE làm hộ bạn |
+
+--- BẰNG CHỨNG TRONG PLAN (AQE ON, đọc SAU khi chạy) ---
+  node `AQEShuffleRead` : CÓ
+  chữ `coalesced`       : CÓ
+      AdaptiveSparkPlan isFinalPlan=true
+      +- AQEShuffleRead coalesced
+
+=== KẾT LUẬN (viết vào report) ===
+
+AQE ĐÃ LÀM GÌ: nó COALESCE (gộp) các partition sau shuffle SAU KHI đã nhìn thấy
+kích thước THẬT của chúng. Số task ở stage sau shuffle: 200 -> 1.
+
+Vì sao AQE off không làm được? Vì lúc lập plan, Spark chưa chạy gì cả — nó
+không biết groupBy này ra 8 nhóm hay 8 triệu nhóm. Không biết thì dùng số cứng
+`spark.sql.shuffle.partitions = 200`. AQE thì hoãn quyết định: chạy xong stage
+map, đọc thống kê kích thước từng partition (MapOutputStatistics), rồi mới gộp
+sao cho mỗi task đạt ~spark.sql.adaptive.advisoryPartitionSizeInBytes (64MB).
+
+192 task đọc 0 record thì có hại gì? Mỗi task rỗng vẫn phải: được driver lên lịch,
+serialize + gửi đi, deserialize + khởi tạo trên executor, mở/đóng shuffle reader,
+báo metrics về driver. Vài ms mỗi cái, nhân với hàng trăm, nhân với hàng nghìn
+job/ngày. Trên dữ liệu Olist bé xíu, phần OVERHEAD này có thể lớn hơn cả phần
+tính toán thật — nhìn cột thời gian ở bảng trên.
+
+TRUNG THỰC VỚI SỐ ĐO: Olist quá bé, chênh lệch thời gian giữa 2 dòng có thể nhỏ,
+thậm chí ngược dấu (AQE tự nó cũng tốn công lập kế hoạch lại). Nếu số của bạn
+như vậy thì GHI ĐÚNG NHƯ VẬY và giải thích. Thứ chắc chắn đúng và đáng chỉ vào
+là SỐ TASK (200 -> 1), không phải số giây.
+
+LIÊN HỆ CÁC BÀI KHÁC: A16 giải quyết đúng vấn đề này bằng tay (chỉnh
+shuffle.partitions = 8). AQE làm việc đó TỰ ĐỘNG và động theo từng lần chạy —
+đó là lý do production BẬT AQE (mặc định từ Spark 3.2), và chỉ TẮT khi đang
+học đếm stage (bài A10, A11).
+
+Số nhóm order_status thật sự: 8 (đây chính là số task 'có việc làm' tối đa)
+====================================================================================================
+

@@ -1,0 +1,93 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master 'local[2]' /workspace/labs/mini-project-1/exercises/a30_column_pruning.py
+26/07/14 09:51:51 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:51:51 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:51:51 INFO ResourceUtils: ==============================================================
+26/07/14 09:51:51 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:51:51 INFO ResourceUtils: ==============================================================
+26/07/14 09:51:51 INFO SparkContext: Submitted application: a30-column-pruning
+26/07/14 09:51:51 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:51:51 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:51:51 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:51:51 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:51:51 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:51:51 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:51:51 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:51:51 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:51:51 INFO Utils: Successfully started service 'sparkDriver' on port 42069.
+26/07/14 09:51:51 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:51:51 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:51:51 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:51:51 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:51:51 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:51:51 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-c5541633-0132-4d8f-9bb7-952233c45209
+26/07/14 09:51:51 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:51:51 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:51:51 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:51:51 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:51:51 INFO Executor: Starting executor ID driver on host 8aca0779bea3
+26/07/14 09:51:51 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/07/14 09:51:51 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 37775.
+26/07/14 09:51:51 INFO NettyBlockTransferService: Server created on 8aca0779bea3:37775
+26/07/14 09:51:51 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:51:51 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 37775, None)
+26/07/14 09:51:51 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:37775 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 37775, None)
+26/07/14 09:51:51 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 37775, None)
+26/07/14 09:51:51 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 37775, None)
+
+==============================================================================
+A30 — CHUẨN BỊ
+==============================================================================
+Nguồn: silver (/workspace/data/output/silver/orders_clean)
+Ghi /workspace/data/bench/a30/orders: 4 file, 10.7 MB, 12 cột: ['order_id', 'customer_id', 'order_status', 'order_purchase_timestamp', 'order_approved_at', 'order_delivered_carrier_date', 'order_delivered_customer_date', 'order_estimated_delivery_date', 'source_file', 'order_date', 'price', 'freight_value']
+Số dòng: 99,441
+  [Q_COUNT  df.count()] các lần chạy: 0.07s, 0.06s, 0.06s  -> lấy min(sau warmup) = 0.06s
+  [Q_ALL    đọc đủ 11 cột (noop)] các lần chạy: 0.21s, 0.09s, 0.09s  -> lấy min(sau warmup) = 0.09s
+  [Q_ONE    select(price).sum] các lần chạy: 0.10s, 0.08s, 0.06s  -> lấy min(sau warmup) = 0.06s
+
+==============================================================================
+BẢNG A30.1 — BẰNG CHỨNG CHÍNH (chú ý 2 cột cuối, KHÔNG phải cột giây)
+==============================================================================
+| Query | Cột thực đọc | lần 1 (lạnh) | min lần 2-3 | files read | size of files read | input bytes | input bytes (số nguyên) |
+|---|---|---|---|---|---|---|---|
+| Q_COUNT  df.count() | 0 cột (chỉ footer) | 0.07s | 0.06s | 4 | 10.6 MB | 60.1 KB | 61,540 |
+| Q_ALL    đọc đủ 11 cột (noop) | 12/12 cột | 0.21s | 0.09s | 4 | 10.6 MB | 10.8 MB | 11,300,247 |
+| Q_ONE    select(price).sum | 1/12 cột | 0.10s | 0.06s | 4 | 10.6 MB | 319.8 KB | 327,524 |
+
+KẾT LUẬN SỐ:
+  bytes(11 cột) / bytes(1 cột) = 11,300,247 / 327,524 = 34.5×
+  => đọc 1 cột chỉ tốn 2.9% I/O của đọc cả bảng.
+  count() đọc 61,540 byte — nhỏ hơn cả query 1 cột, vì nó đọc 0 cột (chứng minh BẪY 1 ở docstring là thật).
+  `size of files read` giữa các query BẰNG NHAU (nếu đúng như dự đoán) ->
+  metric đó KHÔNG đo được column pruning. Đề bài chỉ sai chỗ này.
+
+
+==============================================================================
+BẢNG A30.2 — KIỂM CHỨNG CHÉO: kích thước TỪNG CỘT bên trong file Parquet
+==============================================================================
+| Cột | byte nén trong file | % tổng |
+|---|---|---|
+| customer_id | 810,710 | 29.1% |
+| order_id | 810,589 | 29.1% |
+| order_delivered_customer_date | 256,781 | 9.2% |
+| order_purchase_timestamp | 248,680 | 8.9% |
+| order_approved_at | 244,393 | 8.8% |
+| order_delivered_carrier_date | 231,007 | 8.3% |
+| freight_value | 62,528 | 2.2% |
+| price | 56,000 | 2.0% |
+| order_date | 31,196 | 1.1% |
+| order_estimated_delivery_date | 29,890 | 1.1% |
+| order_status | 2,599 | 0.1% |
+| source_file | 150 | 0.0% |
+| **TỔNG** | 2,784,523 | 100% |
+
+File mổ: part-00000-4396f3bf-b1a6-4864-96dd-c22680043f28-c000.snappy.parquet (24,861 dòng, 1 row group)
+Cột price chiếm 2.0% dung lượng file -> về lý thuyết đọc 1 cột price tốn ~50× ít I/O hơn đọc cả bảng.
+So con số này với tỉ lệ input_bytes ở Bảng A30.1: hai nguồn độc lập, khớp nhau thì số đo đáng tin.
+
+==============================================================================
+A30 — NGOẠI SUY (câu chốt của đề bài)
+==============================================================================
+Olist bé (~10.7 MB parquet) nên chênh lệch GIÂY khiêm tốn — phần lớn thời gian là overhead cố định (lập plan, gửi task, khởi động JVM).
+Nhưng bytes chênh 34.5×. Ở dữ liệu ×100 (bài A40), phần I/O trở thành phần
+CHI PHỐI, còn overhead cố định thì không đổi -> thời gian sẽ tiệm cận tỉ lệ bytes ~34.5×.
+Đó là lý do rubric bắt 'chỉ vào bytes read' chứ không chỉ vào đồng hồ.

@@ -1,0 +1,128 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master 'local[2]' /workspace/labs/mini-project-1/exercises/a27_four_formats.py
+26/07/14 09:44:24 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:44:24 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:44:24 INFO ResourceUtils: ==============================================================
+26/07/14 09:44:24 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:44:24 INFO ResourceUtils: ==============================================================
+26/07/14 09:44:24 INFO SparkContext: Submitted application: a27-formats
+26/07/14 09:44:24 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:44:24 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:44:24 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:44:24 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:44:24 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:44:24 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:44:24 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:44:24 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:44:24 INFO Utils: Successfully started service 'sparkDriver' on port 44267.
+26/07/14 09:44:24 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:44:24 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:44:24 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:44:24 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:44:24 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:44:24 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-09f4dbe9-77a0-410c-a7ec-3e139982b3dc
+26/07/14 09:44:24 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:44:24 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:44:24 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:44:24 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:44:24 INFO Executor: Starting executor ID driver on host 8aca0779bea3
+26/07/14 09:44:24 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/07/14 09:44:24 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 41397.
+26/07/14 09:44:24 INFO NettyBlockTransferService: Server created on 8aca0779bea3:41397
+26/07/14 09:44:24 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:44:24 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 41397, None)
+26/07/14 09:44:24 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:41397 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 41397, None)
+26/07/14 09:44:24 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 41397, None)
+26/07/14 09:44:24 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 41397, None)
+DataFrame nguồn: 99441 dòng, 2 partition trong RAM.
+CSV gốc trên đĩa: 16.84 MB  (đây là mốc 1×)
+
+codec mặc định — parquet: snappy | orc: snappy
+
+==============================================================================
+FORMAT = csv   -> /workspace/data/bench/a27_format/csv
+==============================================================================
+  dung lượng   =    19.99 MB   (1.19× CSV gốc), 2 file part-*
+  ghi (ấm)     =    239.7 ms   (lạnh 456 ms)
+  count() (ấm) =    110.1 ms
+  đọc mọi cột  =    149.3 ms
+  đọc 1 cột    =    199.5 ms   (max = 2018-11-12 00:00:00)
+
+==============================================================================
+FORMAT = json   -> /workspace/data/bench/a27_format/json
+==============================================================================
+  dung lượng   =    40.22 MB   (2.39× CSV gốc), 2 file part-*
+  ghi (ấm)     =    224.4 ms   (lạnh 337 ms)
+  count() (ấm) =    115.2 ms
+  đọc mọi cột  =    135.2 ms
+  đọc 1 cột    =    187.8 ms   (max = 2018-11-12 00:00:00)
+
+==============================================================================
+FORMAT = parquet(snappy)   -> /workspace/data/bench/a27_format/parquet
+==============================================================================
+  dung lượng   =    10.41 MB   (0.62× CSV gốc), 2 file part-*
+  ghi (ấm)     =    229.0 ms   (lạnh 770 ms)
+  count() (ấm) =     78.1 ms
+  đọc mọi cột  =    102.3 ms
+  đọc 1 cột    =     81.3 ms   (max = 2018-11-12 00:00:00)
+
+==============================================================================
+FORMAT = orc(mặc định)   -> /workspace/data/bench/a27_format/orc
+==============================================================================
+  dung lượng   =     7.82 MB   (0.46× CSV gốc), 2 file part-*
+  ghi (ấm)     =    109.7 ms   (lạnh 399 ms)
+  count() (ấm) =     48.0 ms
+  đọc mọi cột  =     70.2 ms
+  đọc 1 cột    =     53.4 ms   (max = 2018-11-12 00:00:00)
+
+==============================================================================
+FORMAT = avro -> BỎ QUA
+==============================================================================
+  Bằng chứng: Failed to find data source: avro. Avro is built-in but external data source module since Spark 2.4. Please deploy the application as per the deployment section of Apache Avro Data Source Guide.
+  Image apache/spark:3.4.1 KHÔNG kèm data source spark-avro.
+  Muốn có: --packages org.apache.spark:spark-avro_2.12:3.4.1 (cần mạng).
+  KHÔNG bịa số cho format không chạy được.
+
+==============================================================================
+BẢNG (dán vào PROGRESS §3.4 'Format')
+==============================================================================
+
+| Format | Dung lượng | Tỉ lệ so CSV gốc | Số file | Ghi (ms, ấm) | count() (ms) | Đọc mọi cột (ms) | Đọc 1 cột (ms) |
+|---|---|---|---|---|---|---|---|
+| CSV gốc (nguồn) | 16.84 MB | **1×** | 1 | — | — | — | — |
+| csv | 19.99 MB | 1.19× | 2 | 240 | 110 | 149 | 200 |
+| json | 40.22 MB | 2.39× | 2 | 224 | 115 | 135 | 188 |
+| parquet(snappy) | 10.41 MB | 0.62× | 2 | 229 | 78 | 102 | 81 |
+| orc(mặc định) | 7.82 MB | 0.46× | 2 | 110 | 48 | 70 | 53 |
+
+HAI CÂU ĐỀ HỎI — trả lời bằng cơ chế, không bằng cảm tính:
+
+1) VÌ SAO JSON TO HƠN CSV?
+   Vì JSON lặp lại TÊN CỘT ở MỌI DÒNG. CSV ghi tên cột đúng 1 lần (header).
+   Một dòng orders có 8 cột; tên cột trung bình ~25 ký tự
+   ("order_delivered_customer_date" là 29) -> JSON phải trả thêm ~200 byte/dòng
+   chỉ để nói lại những cái tên mà nó đã nói ở dòng trước, 99.441 lần.
+   Cộng thêm { } " " : , -> phình. JSON đổi DUNG LƯỢNG lấy TÍNH TỰ MÔ TẢ
+   (mỗi dòng tự hiểu được, không cần header, không sợ lệch cột — chính là bệnh
+   L4b của bài A23). Không có bữa trưa miễn phí, chỉ có đánh đổi.
+
+2) VÌ SAO PARQUET ĐỌC-1-CỘT NHANH HƠN NHIỀU DÙ CÙNG SỐ DÒNG?
+   Vì bố cục vật lý khác nhau, không phải vì "Parquet được tối ưu hơn":
+   - CSV/JSON là ROW-ORIENTED: các giá trị của 1 dòng nằm cạnh nhau trên đĩa.
+     Muốn lấy cột thứ 8, engine BẮT BUỘC đọc và parse cả 7 cột trước nó, từng dòng một.
+     Đọc 1 cột = đọc 100% file. Không có cách nào khác.
+   - Parquet/ORC là COLUMNAR: mọi giá trị của CÙNG MỘT CỘT nằm liền kề nhau thành
+     một khối (column chunk). Muốn cột thứ 8 -> footer cho biết cột đó nằm ở byte
+     nào -> SEEK thẳng tới đó, đọc đúng khối đó. Đọc 1/8 cột ~ đọc ~1/8 bytes.
+   - Phần thưởng kèm theo: giá trị cùng cột thì cùng kiểu và hay giống nhau
+     -> nén rất tốt (dictionary + RLE). Đó là lý do Parquet vừa NHỎ hơn vừa NHANH hơn,
+     hai thứ thường phải đánh đổi cho nhau.
+
+CẢNH BÁO KHI ĐỌC BẢNG TRÊN (trung thực > đẹp):
+   - Olist chỉ 17 MB. Ở kích thước này, chi phí CỐ ĐỊNH (khởi động job ~50 ms,
+     mở file, đọc footer) LẤN ÁT chi phí đọc dữ liệu. Cột "ms" có thể cho kết quả
+     phản trực giác (thậm chí CSV nhanh hơn ở vài phép đo) — ĐỪNG SỬA SỐ, hãy đọc
+     cột DUNG LƯỢNG và bảng bytes-read của A30. Bytes không nói dối, giây thì có.
+   - count() trên Parquet/ORC gần như tức thời vì nó đọc FOOTER (số dòng ghi sẵn),
+     không đọc data. So count() của Parquet với count() của CSV là so "đọc metadata"
+     với "parse 17 MB text" — đúng về mặt kết quả, nhưng phải hiểu vì sao mới nói được.
+

@@ -1,0 +1,18 @@
+[gen] nguồn    : /home/hoanggggf/Documents/data-engineering/spark-mastery/data/olist/olist_orders_dataset.csv
+[gen] đã ghi   : /home/hoanggggf/Documents/data-engineering/spark-mastery/data/dirty/orders_dirty.csv
+[gen]   tổng   : 2009 dòng = 1 header + 2000 data sạch + 8 dòng bẩn
+[gen]   (generator = src/make_dirty.py — xem results/a23_injected.md)
+
+| # | Loại bẩn | Dòng số (1-based, kể cả header) | Token thô | Token parser | Nguyên văn (60 ký tự đầu) |
+|---|---|---|---|---|---|
+| 1 | `L1_thieu_cot` — Thiếu cột: xoá 2 field cuối (chỉ còn 6/8) | 224 | 6 | 6 | `dirty01missingcols,cust01,delivered,2018-07-02 10:00:00,2018` |
+| 2 | `L2_thua_cot` — Thừa cột: nhét 1 field lạ vào GIỮA (thành 9/8) | 447 | 9 | 9 | `dirty02extracols,cust02,delivered,FIELD_LA_TU_DAU_RA,2018-07` |
+| 3 | `L3_sai_kieu` — Sai kiểu: order_purchase_timestamp = 'hom qua' (vẫn ĐÚNG 8 field) | 670 | 8 | 8 | `dirty03badtype,cust03,delivered,hom qua,2018-07-02 11:00:00,` |
+| 4 | `L4a_phay_trong_text_thua_token` — Dấu phẩy trong text không có ngoặc kép, không bù trừ -> 9 token | 893 | 9 | 9 | `dirty04acomma,cust04a,Sao Paulo, SP,2018-07-02 10:00:00,2018` |
+| 5 | `L4b_phay_trong_text_lech_cot` — Dấu phẩy trong text + thiếu 1 field cuối -> ĐỦ 8 token nhưng LỆCH CỘT | 1116 | 8 | 8 | `dirty04bcomma,cust04b,Sao Paulo, SP,2018-07-02 10:00:00,2018` |
+| 6 | `L5_ngoac_kep_lech` — Ngoặc kép mở " mà không đóng | 1339 | ? | 2 | `dirty05badquote,"cust05,delivered,2018-07-02 10:00:00,2018-0` |
+| 7 | `L6a_dong_trong` — Dòng trống hoàn toàn | 1562 | 0 | 0 | `(dòng trống)` |
+| 8 | `L6b_header_lap` — Header lặp lại ở GIỮA file (kinh điển khi `cat` nhiều file lại) | 1785 | 8 | 8 | `"order_id","customer_id","order_status","order_purchase_time` |
+
+Schema đúng có 8 field. Mọi con số khác 8 ở cột 'token thô' là một cái bẫy CẤU TRÚC.
+Nguy hiểm nhất là dòng có ĐÚNG 8 token mà vẫn sai: L4b (lệch cột).

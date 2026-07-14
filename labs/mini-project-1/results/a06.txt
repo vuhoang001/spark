@@ -1,0 +1,301 @@
+docker exec spark-mastery-spark-submit-1 /opt/spark/bin/spark-submit --master 'local[2]' /workspace/labs/mini-project-1/exercises/a06_explain_map.py
+26/07/14 09:03:54 INFO SparkContext: Running Spark version 3.4.1
+26/07/14 09:03:54 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/07/14 09:03:54 INFO ResourceUtils: ==============================================================
+26/07/14 09:03:54 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/07/14 09:03:54 INFO ResourceUtils: ==============================================================
+26/07/14 09:03:54 INFO SparkContext: Submitted application: a06-explain-map
+26/07/14 09:03:54 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/07/14 09:03:54 INFO ResourceProfile: Limiting resource is cpu
+26/07/14 09:03:54 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/07/14 09:03:54 INFO SecurityManager: Changing view acls to: root
+26/07/14 09:03:54 INFO SecurityManager: Changing modify acls to: root
+26/07/14 09:03:54 INFO SecurityManager: Changing view acls groups to: 
+26/07/14 09:03:54 INFO SecurityManager: Changing modify acls groups to: 
+26/07/14 09:03:54 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+26/07/14 09:03:54 INFO Utils: Successfully started service 'sparkDriver' on port 42801.
+26/07/14 09:03:54 INFO SparkEnv: Registering MapOutputTracker
+26/07/14 09:03:54 INFO SparkEnv: Registering BlockManagerMaster
+26/07/14 09:03:54 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/07/14 09:03:54 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/07/14 09:03:54 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/07/14 09:03:54 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-3f34adfe-f363-4e53-be62-88009e56ceb1
+26/07/14 09:03:54 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/07/14 09:03:54 INFO SparkEnv: Registering OutputCommitCoordinator
+26/07/14 09:03:54 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/07/14 09:03:54 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/07/14 09:03:54 INFO Executor: Starting executor ID driver on host 8aca0779bea3
+26/07/14 09:03:54 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/07/14 09:03:54 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 37887.
+26/07/14 09:03:54 INFO NettyBlockTransferService: Server created on 8aca0779bea3:37887
+26/07/14 09:03:54 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/07/14 09:03:54 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8aca0779bea3, 37887, None)
+26/07/14 09:03:54 INFO BlockManagerMasterEndpoint: Registering block manager 8aca0779bea3:37887 with 434.4 MiB RAM, BlockManagerId(driver, 8aca0779bea3, 37887, None)
+26/07/14 09:03:54 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8aca0779bea3, 37887, None)
+26/07/14 09:03:54 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8aca0779bea3, 37887, None)
+
+[setup] Chưa có /workspace/data/bench/a06_orders_pq -> đang ghi (chỉ làm 1 lần)...
+[setup] Xong.
+
+==============================================================================
+QUERY: Q1 · CSV · filter(status=delivered) -> select 2 cột -> groupBy(tháng)
+==============================================================================
+== Physical Plan ==
+AdaptiveSparkPlan (7)
++- HashAggregate (6)
+   +- Exchange (5)
+      +- HashAggregate (4)
+         +- Project (3)
+            +- Filter (2)
+               +- Scan csv  (1)
+
+
+(1) Scan csv 
+Output [3]: [order_id#0, order_status#2, order_purchase_timestamp#3]
+Batched: false
+Location: InMemoryFileIndex [file:/workspace/data/olist/olist_orders_dataset.csv]
+PushedFilters: [IsNotNull(order_status), EqualTo(order_status,delivered)]
+ReadSchema: struct<order_id:string,order_status:string,order_purchase_timestamp:timestamp>
+
+(2) Filter
+Input [3]: [order_id#0, order_status#2, order_purchase_timestamp#3]
+Condition : (isnotnull(order_status#2) AND (order_status#2 = delivered))
+
+(3) Project
+Output [2]: [order_id#0, date_format(order_purchase_timestamp#3, yyyy-MM, Some(Etc/UTC)) AS _groupingexpression#71]
+Input [3]: [order_id#0, order_status#2, order_purchase_timestamp#3]
+
+(4) HashAggregate
+Input [2]: [order_id#0, _groupingexpression#71]
+Keys [1]: [_groupingexpression#71]
+Functions [1]: [partial_count(order_id#0)]
+Aggregate Attributes [1]: [count#72L]
+Results [2]: [_groupingexpression#71, count#73L]
+
+(5) Exchange
+Input [2]: [_groupingexpression#71, count#73L]
+Arguments: hashpartitioning(_groupingexpression#71, 200), ENSURE_REQUIREMENTS, [plan_id=83]
+
+(6) HashAggregate
+Input [2]: [_groupingexpression#71, count#73L]
+Keys [1]: [_groupingexpression#71]
+Functions [1]: [count(order_id#0)]
+Aggregate Attributes [1]: [count(order_id#0)#67L]
+Results [2]: [_groupingexpression#71 AS thang#64, count(order_id#0)#67L AS so_don#68L]
+
+(7) AdaptiveSparkPlan
+Output [2]: [thang#64, so_don#68L]
+Arguments: isFinalPlan=false
+
+
+
+--- 5 điểm khoanh (script tự bắt từ plan trên) ---
+| điểm | giá trị đo được |
+|---|---|
+| 1. nguồn đọc | `Scan csv` |
+| 2. PushedFilters | `[IsNotNull(order_status), EqualTo(order_status,delivered)]` |
+| 3. PartitionFilters | `(không có — nguồn không phân vùng)` |
+| 4. ReadSchema | 3 cột / 8 cột gốc — `struct<order_id:string,order_status:string,order_purchase_timestamp:timestamp>` |
+| 5a. số `Exchange` (= số shuffle) | **1** |
+| 5b. số `HashAggregate` | **2** |
+| (phụ) toàn bộ node | Scan csv → Filter → Project → HashAggregate → Exchange → HashAggregate → AdaptiveSparkPlan |
+
+=> Kết quả thật (chứng minh query chạy được, không phải plan suông):
++-------+------+
+|thang  |so_don|
++-------+------+
+|2016-09|1     |
+|2016-10|265   |
+|2016-12|1     |
++-------+------+
+only showing top 3 rows
+
+
+==============================================================================
+QUERY: Q2 · CSV · filter(substring(order_id,1,2)='ab') — biểu thức PHỨC TẠP
+==============================================================================
+== Physical Plan ==
+* Filter (2)
++- Scan csv  (1)
+
+
+(1) Scan csv 
+Output [2]: [order_id#0, order_purchase_timestamp#3]
+Batched: false
+Location: InMemoryFileIndex [file:/workspace/data/olist/olist_orders_dataset.csv]
+PushedFilters: [IsNotNull(order_id)]
+ReadSchema: struct<order_id:string,order_purchase_timestamp:timestamp>
+
+(2) Filter [codegen id : 1]
+Input [2]: [order_id#0, order_purchase_timestamp#3]
+Condition : (isnotnull(order_id#0) AND (substring(order_id#0, 1, 2) = ab))
+
+
+
+--- 5 điểm khoanh (script tự bắt từ plan trên) ---
+| điểm | giá trị đo được |
+|---|---|
+| 1. nguồn đọc | `Scan csv` |
+| 2. PushedFilters | `[IsNotNull(order_id)]` |
+| 3. PartitionFilters | `(không có — nguồn không phân vùng)` |
+| 4. ReadSchema | 2 cột / 8 cột gốc — `struct<order_id:string,order_purchase_timestamp:timestamp>` |
+| 5a. số `Exchange` (= số shuffle) | **0** |
+| 5b. số `HashAggregate` | **0** |
+| (phụ) toàn bộ node | Scan csv → Filter |
+
+=> So dòng PushedFilters của Q2 với Q1. Reader CSV chỉ nhận được vài kiểu
+   filter đơn giản (IsNotNull / EqualTo / GreaterThan...). `substring(...)`
+   không nằm trong danh sách đó -> nó KHÔNG xuống được reader, phải leo lên
+   thành một node `Filter` chạy SAU khi đã đọc đủ cả 99.441 dòng.
+
+==============================================================================
+QUERY: Q3 · PARQUET · y hệt Q1
+==============================================================================
+== Physical Plan ==
+AdaptiveSparkPlan (7)
++- HashAggregate (6)
+   +- Exchange (5)
+      +- HashAggregate (4)
+         +- Project (3)
+            +- Filter (2)
+               +- Scan parquet  (1)
+
+
+(1) Scan parquet 
+Output [4]: [order_id#44, order_status#46, order_purchase_timestamp#47, order_date#52]
+Batched: true
+Location: InMemoryFileIndex [file:/workspace/data/bench/a06_orders_pq]
+PushedFilters: [IsNotNull(order_status), EqualTo(order_status,delivered)]
+ReadSchema: struct<order_id:string,order_status:string,order_purchase_timestamp:timestamp>
+
+(2) Filter
+Input [4]: [order_id#44, order_status#46, order_purchase_timestamp#47, order_date#52]
+Condition : (isnotnull(order_status#46) AND (order_status#46 = delivered))
+
+(3) Project
+Output [2]: [order_id#44, date_format(order_purchase_timestamp#47, yyyy-MM, Some(Etc/UTC)) AS _groupingexpression#100]
+Input [4]: [order_id#44, order_status#46, order_purchase_timestamp#47, order_date#52]
+
+(4) HashAggregate
+Input [2]: [order_id#44, _groupingexpression#100]
+Keys [1]: [_groupingexpression#100]
+Functions [1]: [partial_count(order_id#44)]
+Aggregate Attributes [1]: [count#101L]
+Results [2]: [_groupingexpression#100, count#102L]
+
+(5) Exchange
+Input [2]: [_groupingexpression#100, count#102L]
+Arguments: hashpartitioning(_groupingexpression#100, 200), ENSURE_REQUIREMENTS, [plan_id=169]
+
+(6) HashAggregate
+Input [2]: [_groupingexpression#100, count#102L]
+Keys [1]: [_groupingexpression#100]
+Functions [1]: [count(order_id#44)]
+Aggregate Attributes [1]: [count(order_id#44)#96L]
+Results [2]: [_groupingexpression#100 AS thang#93, count(order_id#44)#96L AS so_don#97L]
+
+(7) AdaptiveSparkPlan
+Output [2]: [thang#93, so_don#97L]
+Arguments: isFinalPlan=false
+
+
+
+--- 5 điểm khoanh (script tự bắt từ plan trên) ---
+| điểm | giá trị đo được |
+|---|---|
+| 1. nguồn đọc | `Scan parquet` |
+| 2. PushedFilters | `[IsNotNull(order_status), EqualTo(order_status,delivered)]` |
+| 3. PartitionFilters | `(không có — nguồn không phân vùng)` |
+| 4. ReadSchema | 3 cột / 8 cột gốc — `struct<order_id:string,order_status:string,order_purchase_timestamp:timestamp>` |
+| 5a. số `Exchange` (= số shuffle) | **1** |
+| 5b. số `HashAggregate` | **2** |
+| (phụ) toàn bộ node | Scan parquet → Filter → Project → HashAggregate → Exchange → HashAggregate → AdaptiveSparkPlan |
+
+==============================================================================
+QUERY: Q4 · PARQUET · where order_date='2018-07-02' AND status='delivered'
+==============================================================================
+== Physical Plan ==
+* Project (4)
++- * Filter (3)
+   +- * ColumnarToRow (2)
+      +- Scan parquet  (1)
+
+
+(1) Scan parquet 
+Output [3]: [order_id#44, order_status#46, order_date#52]
+Batched: true
+Location: InMemoryFileIndex [file:/workspace/data/bench/a06_orders_pq]
+PartitionFilters: [isnotnull(order_date#52), (order_date#52 = 2018-07-02)]
+PushedFilters: [IsNotNull(order_status), EqualTo(order_status,delivered)]
+ReadSchema: struct<order_id:string,order_status:string>
+
+(2) ColumnarToRow [codegen id : 1]
+Input [3]: [order_id#44, order_status#46, order_date#52]
+
+(3) Filter [codegen id : 1]
+Input [3]: [order_id#44, order_status#46, order_date#52]
+Condition : (isnotnull(order_status#46) AND (order_status#46 = delivered))
+
+(4) Project [codegen id : 1]
+Output [2]: [order_id#44, order_status#46]
+Input [3]: [order_id#44, order_status#46, order_date#52]
+
+
+
+--- 5 điểm khoanh (script tự bắt từ plan trên) ---
+| điểm | giá trị đo được |
+|---|---|
+| 1. nguồn đọc | `Scan parquet` |
+| 2. PushedFilters | `[IsNotNull(order_status), EqualTo(order_status,delivered)]` |
+| 3. PartitionFilters | `[isnotnull(order_date#52), (order_date#52 = 2018-07-02)]` |
+| 4. ReadSchema | 2 cột / 8 cột gốc — `struct<order_id:string,order_status:string>` |
+| 5a. số `Exchange` (= số shuffle) | **0** |
+| 5b. số `HashAggregate` | **0** |
+| (phụ) toàn bộ node | Scan parquet → ColumnarToRow → Filter → Project |
+
+=> Số dòng thật của Q4: 193
+
+==============================================================================
+KẾT LUẬN A6 — trả lời đúng câu đề hỏi
+==============================================================================
+
+[a] VÌ SAO `HashAggregate` XUẤT HIỆN 2 LẦN? (Q1 đếm được: 2 lần)
+    Vì Spark gom 2 pha, ngăn cách bởi Exchange:
+      HashAggregate (partial) -> Exchange (shuffle) -> HashAggregate (final)
+    Pha partial chạy NGAY TẠI CHỖ trên từng partition: 99.441 dòng gộp sớm còn ~vài
+    chục dòng (số tháng) TRƯỚC khi bay qua mạng. Nếu không có pha này, cả 99.441 dòng
+    phải shuffle. Đây là "combiner" của MapReduce, Catalyst tự cài hộ.
+    -> Đếm `Exchange` = đếm số lần dữ liệu bay qua network. Q1 có 1 cái.
+
+[b] `PushedFilters` KHÁC `PartitionFilters` THẾ NÀO — câu này đề hỏi thẳng:
+
+    PartitionFilters  = LOẠI BỎ CẢ THƯ MỤC, không mở file ra xem.
+        Cột phân vùng (order_date) không nằm trong file Parquet — nó nằm trong TÊN
+        THƯ MỤC (order_date=2018-07-02/). Spark chỉ cần liệt kê thư mục là biết bỏ
+        cái nào. 599/600 thư mục bị loại mà KHÔNG TỐN 1 BYTE I/O nào.
+        -> tiết kiệm ở mức FILE.
+
+    PushedFilters     = MỞ FILE RA, nhưng bỏ bớt row-group / dòng bên trong.
+        order_status là dữ liệu thật nằm trong file. Spark vẫn phải mở file, đọc
+        footer, so min/max của từng row-group rồi mới bỏ được phần không khớp.
+        -> tiết kiệm ở mức TRONG FILE. Vẫn phải chạm vào file.
+
+    Với CSV thì PartitionFilters không tồn tại (không có thư mục phân vùng) và
+    PushedFilters gần như vô dụng (CSV không có footer/min-max để mà skip — reader
+    vẫn phải parse từng dòng text rồi mới bỏ). Đó là toàn bộ lý do ta đổi sang Parquet.
+
+[c] Filter nào CSV KHÔNG push được mà Parquet push được?
+    -> So dòng `PushedFilters` của Q1 (CSV) và Q3 (Parquet) ở trên. Và quan trọng hơn,
+       so `PartitionFilters` của Q4: CSV KHÔNG BAO GIỜ có dòng này.
+
+[d] COLUMN PRUNING: ReadSchema của Q1/Q3 chỉ có 3 cột trong khi bảng gốc có 8.
+    5 cột kia không bao giờ được đọc lên. Với CSV thì lợi ích này là GIẢ — reader vẫn
+    phải quét hết từng ký tự của dòng text để biết dấu phẩy ở đâu, rồi mới vứt cột
+    thừa đi. Với Parquet (lưu theo CỘT) thì nó là THẬT: cột không cần = không đọc byte
+    nào. Muốn thấy bằng BYTES chứ không phải bằng chữ -> bài A30.
+
+LƯU Ý AQE: cụm này bật AQE, nên plan mở đầu bằng `AdaptiveSparkPlan isFinalPlan=false`.
+Nghĩa là plan bạn thấy ở đây là plan DỰ ĐỊNH; lúc chạy thật Spark có thể đổi (gộp
+partition sau shuffle...). Plan CUỐI CÙNG chỉ xem được ở tab SQL của Spark UI sau khi
+job chạy xong. Đây là chỗ explain() nói dối một nửa — nhớ lấy.
+
